@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indica Customer Dashboard</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #070709;
+            --panel: #0d0d10;
+            --panel-card: #121215;
+            --border: rgba(255, 255, 255, 0.05);
+            --border-strong: rgba(255, 255, 255, 0.1);
+            --text: #f3f5f7;
+            --muted: #8c92a0;
+            --accent: #5032a8;
+            --accent-hover: #633fd0;
+            --accent-soft: rgba(80, 50, 168, 0.15);
+            --green: #10b981;
+            --green-soft: rgba(16, 185, 129, 0.15);
+            --red: #ef4444;
+            --red-soft: rgba(239, 68, 68, 0.15);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(80, 50, 168, 0.12) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(80, 50, 168, 0.08) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Shells & Panels */
+        .app-shell {
+            width: 100%;
+            max-width: 800px;
+            z-index: 10;
+        }
+
+        /* Login Layout */
+        .login-card {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            background: linear-gradient(180deg, var(--panel), #0a0a0d);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 34px 28px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            justify-content: center;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(80, 50, 168, 0.3);
+        }
+
+        .brand-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+            margin-top: -12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .form-group input {
+            background-color: var(--panel-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(80, 50, 168, 0.15);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s, transform 0.1s;
+            box-shadow: 0 6px 15px rgba(80, 50, 168, 0.2);
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--muted);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .error-banner {
+            background-color: var(--red-soft);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ff8e8e;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Authenticated Dashboard Layout */
+        .dash-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .dash-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background-color: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background-color: var(--green-soft);
+            color: var(--green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-disabled {
+            background-color: var(--red-soft);
+            color: var(--red);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .detail-panel {
+            background-color: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .detail-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 13px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row span:first-child {
+            color: var(--muted);
+        }
+
+        .detail-row span:last-child {
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, rgba(80, 50, 168, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            border: 1px solid rgba(80, 50, 168, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .action-info h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .action-info p {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .btn-unbind {
+            background-color: #c23b2b;
+            box-shadow: 0 4px 12px rgba(194, 59, 43, 0.2);
+        }
+
+        .btn-unbind:hover {
+            background-color: #d64535;
+        }
+
+        .toast-banner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--green);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 13px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            animation: slideIn 0.2s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-unbind {
+                width: 100%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+    
+    <div id="toast" class="toast-banner">HWID Reset successful! Key is now unbound.</div>
+
+    <div class="app-shell">
+        
+        <!-- Login Card Panel -->
+        <div id="login-container" class="login-card">
+            <div class="brand-header">
+                <div class="brand-icon">I</div>
+                <h1 class="brand-title">Indica Client Portal</h1>
+            </div>
+            <div class="brand-subtitle">Manage your active license key lock</div>
+            
+            <div id="login-error" class="error-banner">Invalid license credentials.</div>
+
+            <div class="form-group">
+                <label for="input-license">License Key</label>
+                <input type="text" id="input-license" placeholder="INDICA-XXXX-XXXX">
+            </div>
+
+            <div class="form-group">
+                <label for="input-password">Account Password</label>
+                <input type="password" id="input-password" placeholder="••••••••">
+            </div>
+
+            <button onclick="attemptAuth()" class="btn-primary" style="margin-top: 10px;">Authenticate Key</button>
+            <a href="index.html" class="btn-secondary" style="margin-top: 4px;">Back to Home</a>
+        </div>
+
+        <!-- Dashboard View (Authenticated) -->
+        <div id="dashboard-container" class="dash-container hidden">
+            <header class="dash-header">
+                <div class="dash-header-left">
+                    <div class="brand-icon">I</div>
+                    <span style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700;">Customer Dashboard</span>
+                </div>
+                <button onclick="logout()" class="btn-secondary" style="padding: 8px 16px; min-height: unset; border-radius: var(--radius-md); font-size: 11px;">Sign Out</button>
+            </header>
+
+            <div class="dash-grid">
+                <!-- Stat Card 1 -->
+                <div class="stat-card">
+                    <div class="stat-label">Subscription</div>
+                    <div style="margin-top: 4px;">
+                        <span id="display-status-badge" class="stat-badge badge-active">Active</span>
+                    </div>
+                </div>
+                <!-- Stat Card 2 -->
+                <div class="stat-card">
+                    <div class="stat-label">Time Remaining</div>
+                    <div id="display-time-remaining" class="stat-value" style="margin-top: 4px;">29d 22h left</div>
+                </div>
+                <!-- Stat Card 3 -->
+                <div class="stat-card">
+                    <div class="stat-label">HWID Protection</div>
+                    <div id="display-hwid-status" class="stat-value" style="margin-top: 4px; color: var(--green);">Unlocked</div>
+                </div>
+            </div>
+
+            <!-- Detailed Grid Panel -->
+            <div class="detail-panel">
+                <div class="detail-title">License Parameters</div>
+                
+                <div class="detail-row">
+                    <span>License Key</span>
+                    <span id="display-license-key">INDICA-XXXX-XXXX</span>
+                </div>
+                <div class="detail-row">
+                    <span>Subscription Plan</span>
+                    <span id="display-sub-level">Pro tier</span>
+                </div>
+                <div class="detail-row">
+                    <span>Creation Date</span>
+                    <span id="display-created-at">Jul 10, 2026</span>
+                </div>
+                <div class="detail-row">
+                    <span>Expiration Date</span>
+                    <span id="display-expiration-at">Aug 10, 2026</span>
+                </div>
+            </div>
+
+            <!-- HWID Lock Management Actions Box -->
+            <div id="hwid-action-card" class="action-card hidden">
+                <div class="action-info">
+                    <h3>Hardware Lock Bind Detected</h3>
+                    <p>Your license key is locked to another computer's hardware profile. Click unbind to release it for a new computer.</p>
+                </div>
+                <button id="reset-hwid-btn" onclick="unbindHWID()" class="btn-primary btn-unbind">Reset HWID Lock</button>
+            </div>
+            
+        </div>
+
+    </div>
+
+    <!-- Supabase Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://mafafvjxkhtbyacpnswa.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZmFmdmp4a2h0YnlhY3Buc3dhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NTMzMDQsImV4cCI6MjA5MTUyOTMwNH0.t-SU36Q2uNnOOPv6M0VjSJ6AH_jh_nkkTtC8K8v8OKY";
+
+        let authenticatedKeyData = null;
+
+        async function attemptAuth() {
+            const licenseKey = document.getElementById("input-license").value.trim();
+            const password = document.getElementById("input-password").value.trim();
+            const errorEl = document.getElementById("login-error");
+
+            errorEl.style.display = "none";
+
+            if (!licenseKey || !password) {
+                errorEl.innerText = "Please fill in both fields.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            try {
+                const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { data, error } = await supabaseClient
+                    .from('license_keys')
+                    .select('*')
+                    .eq('license_key', licenseKey)
+                    .eq('password', password)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("Invalid credentials");
+                }
+
+                if (!data.is_active) {
+                    errorEl.innerText = "License has been disabled by administrators.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                if (data.expires_at && new Date(data.expires_at) < new Date()) {
+                    errorEl.innerText = "License key has expired.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                authenticatedKeyData = data;
+                populateDashboard();
+
+                document.getElementById("login-container").classList.add("hidden");
+                document.getElementById("dashboard-container").classList.remove("hidden");
+            } catch (err) {
+                console.error(err);
+                errorEl.innerText = "Invalid license key or password.";
+                errorEl.style.display = "block";
+            }
+        }
+
+        function populateDashboard() {
+            if (!authenticatedKeyData) return;
+
+            const key = authenticatedKeyData;
+            document.getElementById("display-license-key").innerText = key.license_key;
+            document.getElementById("display-sub-level").innerText = "Plan tier: " + (key.metadata?.subscription_level || "1");
+            
+            const createDate = new Date(key.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            document.getElementById("display-created-at").innerText = createDate;
+
+            const expireDate = key.expires_at ? new Date(key.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Lifetime";
+            document.getElementById("display-expiration-at").innerText = expireDate;
+
+            // Stats row populate
+            const statusBadge = document.getElementById("display-status-badge");
+            statusBadge.innerText = key.is_active ? "Active" : "Disabled";
+            if (key.is_active) {
+                statusBadge.className = "stat-badge badge-active";
+            } else {
+                statusBadge.className = "stat-badge badge-disabled";
+            }
+
+            // Time left
+            document.getElementById("display-time-remaining").innerText = getTimeLeft(key.expires_at);
+
+            // HWID Bind Checks
+            const hwidStatus = document.getElementById("display-hwid-status");
+            const hwidCard = document.getElementById("hwid-action-card");
+
+            if (key.hwid) {
+                hwidStatus.innerText = "Locked";
+                hwidStatus.style.color = "var(--red)";
+                hwidCard.classList.remove("hidden");
+            } else {
+                hwidStatus.innerText = "Unlocked";
+                hwidStatus.style.color = "var(--green)";
+                hwidCard.classList.add("hidden");
+            }
+        }
+
+        function getTimeLeft(expiryString) {
+            if (!expiryString) return "Lifetime";
+            const expiry = new Date(expiryString);
+            const now = new Date();
+            const diffMs = expiry - now;
+            
+            if (diffMs <= 0) return "Expired";
+            
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            let parts = [];
+            if (diffDays > 0) parts.push(`${diffDays}d`);
+            if (diffHours > 0) parts.push(`${diffHours}h`);
+            if (diffMins > 0) parts.push(`${diffMins}m`);
+            
+            return parts.join(" ") + " left";
+        }
+
+        async function unbindHWID() {
+            const resetBtn = document.getElementById("reset-hwid-btn");
+            if (!authenticatedKeyData) return;
+
+            resetBtn.disabled = true;
+            resetBtn.innerText = "Processing Release...";
+
+            try {
+                const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { error } = await supabaseClient
+                    .from('license_keys')
+                    .update({ hwid: null })
+                    .eq('license_key', authenticatedKeyData.license_key)
+                    .eq('password', authenticatedKeyData.password);
+
+                if (error) throw error;
+
+                // Update loaded memory state
+                authenticatedKeyData.hwid = null;
+                populateDashboard();
+
+                // Toast
+                const toast = document.getElementById("toast");
+                toast.style.display = "block";
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 3000);
+
+            } catch (err) {
+                console.error(err);
+                alert("Failed to unbind HWID: " + err.message);
+            } finally {
+                resetBtn.disabled = false;
+                resetBtn.innerText = "Reset HWID Lock";
+            }
+        }
+
+        function logout() {
+            authenticatedKeyData = null;
+            document.getElementById("input-license").value = "";
+            document.getElementById("input-password").value = "";
+            document.getElementById("dashboard-container").classList.add("hidden");
+            document.getElementById("login-container").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
