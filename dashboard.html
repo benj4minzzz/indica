@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indica Customer Dashboard</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg-main: #101010;
+            --bg-sidebar: #131313;
+            --bg-panels: #161616;
+            --border: rgba(255, 255, 255, 0.03);
+            --border-hover: rgba(255, 255, 255, 0.08);
+            --text: #f3f5f7;
+            --muted: #66666e;
+            --accent: #5032a8;
+            --accent-hover: #633fd0;
+            --accent-soft: rgba(80, 50, 168, 0.15);
+            --green: #10b981;
+            --red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation Item */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            color: #888;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background-color 0.15s, color 0.15s;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Form Controls */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #555;
+            font-weight: 700;
+        }
+
+        .form-group input {
+            background-color: #101010;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: #666;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: #999;
+            color: #ccc;
+        }
+
+        .error-banner {
+            background-color: rgba(239, 68, 68, 0.07);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            color: #ff8e8e;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            text-align: center;
+            display: none;
+        }
+
+        /* visuals.gg Card Grid Layout */
+        .visuals-card {
+            background-color: var(--bg-panels);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1.5fr 1.2fr 180px;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .box-subtitle {
+            font-size: 8px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .product-badge {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .visuals-btn {
+            background-color: #101010;
+            border: 1px solid var(--border);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.15s, border-color 0.15s;
+            text-decoration: none;
+        }
+
+        .visuals-btn:hover {
+            background-color: #161616;
+            border-color: var(--border-hover);
+        }
+
+        .visuals-btn.unbind-active {
+            background-color: #c23b2b;
+            border: none;
+        }
+
+        .visuals-btn.unbind-active:hover {
+            background-color: #d64535;
+        }
+
+        .toast-banner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--green);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            animation: slideIn 0.2s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 360px;
+            margin: 80px auto 0 auto;
+            background-color: var(--bg-panels);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .visuals-card {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .visuals-box-art {
+                margin: 0 auto;
+            }
+            .visuals-btn {
+                width: 100%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="toast" class="toast-banner">HWID Reset successful! Key is now unbound.</div>
+
+    <div style="display: flex; min-height: 100vh; width: 100vw; background-color: var(--bg-main);">
+        
+        <div style="width: 240px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 36px;">
+                <div style="width: 28px; height: 28px; border-radius: 6px; background-color: var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: #fff; box-shadow: 0 0 10px rgba(80,50,168,0.4);">I</div>
+                <span style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em;">indica</span>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: #444; font-weight: 800; margin-bottom: 10px;">Menu</div>
+                <a href="index.html" class="nav-item">
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <span>Orders</span>
+                </a>
+            </div>
+
+            <div>
+                <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: #444; font-weight: 800; margin-bottom: 10px;">Links</div>
+                <a href="https://discord.gg/2WXNQyR8nq" target="_blank" class="nav-item">
+                    <span>Discord</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span>Support</span>
+                </a>
+                <a href="index.html#demo" class="nav-item">
+                    <span>Store</span>
+                </a>
+            </div>
+
+            <div id="sidebar-logout" class="hidden" style="margin-top: auto;">
+                <button onclick="logout()" class="btn-secondary" style="width: 100%; padding: 8px;">Sign Out</button>
+            </div>
+        </div>
+        
+        <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+            <div style="height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; font-size: 11px; color: #555; font-family: monospace;">
+                📁 / Orders
+            </div>
+
+            <div style="flex: 1; padding: 32px; overflow-y: auto;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px;">
+                    <div>
+                        <h1 style="font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 4px;">Orders</h1>
+                        <p style="color: #666; font-size: 13px;">View and manage your active orders here.</p>
+                    </div>
+                    <button id="add-licence-btn" onclick="showAddLicenceForm()" class="btn-primary hidden" style="padding: 10px 16px; font-size: 12px; font-weight: 700;">+ Add License</button>
+                </div>
+
+                <div id="login-container" class="login-card">
+                    <div style="text-align: center; margin-bottom: 6px;">
+                        <h2 style="font-family: 'Outfit', sans-serif; font-size: 18px; color: #fff;">Authenticate Key</h2>
+                        <p style="color: #666; font-size: 12px; margin-top: 4px;">Enter key & password to view orders</p>
+                    </div>
+                    
+                    <div id="login-error" class="error-banner"></div>
+
+                    <div class="form-group">
+                        <label for="input-license">License Key</label>
+                        <input type="text" id="input-license" placeholder="INDICA-XXXX-XXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-password">Account Password</label>
+                        <input type="password" id="input-password" placeholder="••••••••">
+                    </div>
+
+                    <button onclick="attemptAuth()" class="btn-primary" style="margin-top: 6px;">Sign In</button>
+                </div>
+
+                <div id="dashboard-container" class="hidden">
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="add-licence-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background-color: var(--bg-panels); border: 1px solid var(--border); padding: 28px; border-radius: 8px; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: #fff; text-transform: uppercase;">Add Another License</span>
+                <span onclick="closeAddLicenceForm()" style="color: #666; cursor: pointer; font-size: 18px;">&times;</span>
+            </div>
+            <div id="add-licence-error" class="error-banner"></div>
+            <div class="form-group">
+                <label for="add-input-license">License Key</label>
+                <input type="text" id="add-input-license" placeholder="INDICA-XXXX-XXXX">
+            </div>
+            <div class="form-group">
+                <label for="add-input-password">Account Password</label>
+                <input type="password" id="add-input-password" placeholder="••••••••">
+            </div>
+            <button onclick="submitAddLicence()" class="btn-primary">Add Key</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const _k = [
+            "aHR0cHM6Ly9tYWZhZnZqeGtodGJ5YWNwbnN3YS5zdXBhYmFzZS5jbw==",
+            "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW0xaFptRm1kbXA0YTJoMFlubGhZM0J1YzNkaElpd2ljbTlzWlNJNklt",
+            "RnViMjRpTENKcFlYUWlPakUzTnpVNU5UTXpNRFFzSW1WNGNDSTZNakE1TVRVeU9UTXdOSDAudC1TVTM2UTJ1Tm5PT1B2Nk0wVmpTSjZBSF9qaF9ua2tUdEM4Szh2OE9LWQ==",
+            "bGljZW5zZV9rZXlz",
+            "bGljZW5zZV9rZXk=",
+            "cGFzc3dvcmQ=",
+            "aXNfYWN0aXZl",
+            "ZXhwaXJlc19hdA==",
+            "aHdpZA==",
+            "aW5kaWNhX3NhdmVkX2tleXM="
+        ];
+        function _g(i) {
+            return atob(_k[i]);
+        }
+
+        let savedKeys = [];
+        let authenticatedKeyData = [];
+
+        window.addEventListener("DOMContentLoaded", () => {
+            try {
+                const stored = localStorage.getItem(_g(9));
+                if (stored) {
+                    savedKeys = JSON.parse(stored);
+                    if (savedKeys.length > 0) {
+                        loadAllSavedKeys();
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
+        async function loadAllSavedKeys() {
+            if (savedKeys.length === 0) return;
+            
+            const keysList = savedKeys.map(k => k.key);
+            try {
+                const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
+                const { data, error } = await supabaseClient
+                    .from(_g(3))
+                    .select('*')
+                    .in(_g(4), keysList);
+
+                if (error) throw error;
+
+                authenticatedKeyData = (data || []).filter(row => {
+                    const saved = savedKeys.find(sk => sk.key === row[_g(4)]);
+                    return saved && saved.pwd === row[_g(5)];
+                });
+
+                if (authenticatedKeyData.length > 0) {
+                    populateDashboard();
+                    document.getElementById("login-container").classList.add("hidden");
+                    document.getElementById("dashboard-container").classList.remove("hidden");
+                    document.getElementById("sidebar-logout").classList.remove("hidden");
+                } else {
+                    logout();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function attemptAuth() {
+            const licenseKey = document.getElementById("input-license").value.trim();
+            const password = document.getElementById("input-password").value.trim();
+            const errorEl = document.getElementById("login-error");
+
+            errorEl.style.display = "none";
+
+            if (!licenseKey || !password) {
+                errorEl.innerText = "Please fill in both fields.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            try {
+                const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
+                const { data, error } = await supabaseClient
+                    .from(_g(3))
+                    .select('*')
+                    .eq(_g(4), licenseKey)
+                    .eq(_g(5), password)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("Invalid credentials");
+                }
+
+                if (!data[_g(6)]) {
+                    errorEl.innerText = "License has been disabled by administrators.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                if (data[_g(7)] && new Date(data[_g(7)]) < new Date()) {
+                    errorEl.innerText = "License key has expired.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                if (!savedKeys.some(k => k.key === licenseKey)) {
+                    savedKeys.push({ key: licenseKey, pwd: password });
+                    localStorage.setItem(_g(9), JSON.stringify(savedKeys));
+                }
+
+                await loadAllSavedKeys();
+            } catch (err) {
+                console.error(err);
+                errorEl.innerText = "Invalid license key or password.";
+                errorEl.style.display = "block";
+            }
+        }
+
+        function showAddLicenceForm() {
+            document.getElementById("add-licence-modal").style.display = "flex";
+            document.getElementById("add-licence-error").style.display = "none";
+            document.getElementById("add-input-license").value = "";
+            document.getElementById("add-input-password").value = "";
+        }
+
+        function closeAddLicenceForm() {
+            document.getElementById("add-licence-modal").style.display = "none";
+        }
+
+        async function submitAddLicence() {
+            const licenseKey = document.getElementById("add-input-license").value.trim();
+            const password = document.getElementById("add-input-password").value.trim();
+            const errorEl = document.getElementById("add-licence-error");
+
+            errorEl.style.display = "none";
+
+            if (!licenseKey || !password) {
+                errorEl.innerText = "Please fill in both fields.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            if (savedKeys.some(k => k.key === licenseKey)) {
+                errorEl.innerText = "This license key is already added.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            try {
+                const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
+                const { data, error } = await supabaseClient
+                    .from(_g(3))
+                    .select('*')
+                    .eq(_g(4), licenseKey)
+                    .eq(_g(5), password)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("Invalid credentials");
+                }
+
+                if (!data[_g(6)]) {
+                    errorEl.innerText = "License has been disabled.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                if (data[_g(7)] && new Date(data[_g(7)]) < new Date()) {
+                    errorEl.innerText = "License key has expired.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                savedKeys.push({ key: licenseKey, pwd: password });
+                localStorage.setItem(_g(9), JSON.stringify(savedKeys));
+
+                closeAddLicenceForm();
+                await loadAllSavedKeys();
+            } catch (err) {
+                console.error(err);
+                errorEl.innerText = "Invalid key or password.";
+                errorEl.style.display = "block";
+            }
+        }
+
+        function populateDashboard() {
+            const container = document.getElementById("dashboard-container");
+            container.innerHTML = "";
+
+            if (!authenticatedKeyData || authenticatedKeyData.length === 0) {
+                container.innerHTML = `<div style="color: #666; text-align: center; margin-top: 40px; font-size: 13px;">No active licenses loaded.</div>`;
+                return;
+            }
+
+            document.getElementById("add-licence-btn").classList.remove("hidden");
+            document.getElementById("sidebar-logout").classList.remove("hidden");
+
+            authenticatedKeyData.forEach(key => {
+                const expDateStr = key[_g(7)] ? new Date(key[_g(7)]).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : "Lifetime Access";
+                const durationBadge = key[_g(7)] ? "Real Time" : "Lifetime";
+
+                const copyIconSvg = `
+                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                `;
+
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "visuals-card";
+                cardDiv.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 14px; justify-content: center;">
+                        <div>
+                            <div style="font-size: 9px; text-transform: uppercase; color: #444; font-weight: 800; margin-bottom: 2px;">Product</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <strong style="font-size: 15px; color: #fff; font-family: 'Outfit', sans-serif;">Indica</strong>
+                                <span class="product-badge">R6S</span>
+                                <span class="product-badge">${durationBadge}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size: 9px; text-transform: uppercase; color: #444; font-weight: 800; margin-bottom: 4px;">Key(s)</div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <code style="font-family: monospace; background-color: #101010; border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px; color: #fff; font-size: 11px;">${key[_g(4)]}</code>
+                                <span onclick="copyToClipboard('${key[_g(4)]}')" style="cursor: pointer; color: #888; display: inline-flex; align-items: center; justify-content: center; padding: 4px; border-radius: 4px; background: rgba(255,255,255,0.02); transition: color 0.2s;" title="Copy Key" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#888'">
+                                    ${copyIconSvg}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 14px; justify-content: center; padding-left: 20px;">
+                        <div>
+                            <div style="font-size: 9px; text-transform: uppercase; color: #444; font-weight: 800; margin-bottom: 2px;">Date</div>
+                            <div style="font-size: 11px; color: #fff;">${expDateStr}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 9px; text-transform: uppercase; color: #444; font-weight: 800; margin-bottom: 2px;">Time Remaining</div>
+                            <div style="font-size: 12px; color: #fff; font-weight: 700;">${getTimeLeft(key[_g(7)])}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                        <div style="font-size: 9px; text-transform: uppercase; color: #444; font-weight: 800; margin-bottom: 2px;">Links</div>
+                        <a href="https://drive.google.com/file/d/1yfH5y0jSU1GV3RbJe6mUes-Exybw0HQS/view?usp=sharing" target="_blank" class="visuals-btn">Loader</a>
+                        <a href="#" class="visuals-btn">Instructions</a>
+                        ${key[_g(8)] 
+                            ? `<button id="reset-hwid-btn-${key.id}" onclick="unbindHWID('${key[_g(4)]}', '${key[_g(5)]}', ${key.id})" class="visuals-btn unbind-active">Reset HWID</button>` 
+                            : `<button class="visuals-btn" disabled style="opacity: 0.3; cursor: not-allowed;">Reset HWID</button>`
+                        }
+                    </div>
+                </div>
+            `;
+                container.appendChild(cardDiv);
+            });
+        }
+
+        function getTimeLeft(expiryString) {
+            if (!expiryString) return "Lifetime Access";
+            const expiry = new Date(expiryString);
+            const now = new Date();
+            const diffMs = expiry - now;
+            
+            if (diffMs <= 0) return "Expired";
+            
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            let parts = [];
+            if (diffDays > 0) parts.push(`${diffDays}d`);
+            if (diffHours > 0) parts.push(`${diffHours}h`);
+            if (diffMins > 0) parts.push(`${diffMins}m`);
+            
+            return parts.join(" ") + " left";
+        }
+
+        async function unbindHWID(licenseKey, password, rowId) {
+            const resetBtn = document.getElementById(`reset-hwid-btn-${rowId}`);
+            if (!resetBtn) return;
+
+            resetBtn.disabled = true;
+            resetBtn.innerText = "Releasing...";
+
+            try {
+                const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
+                const { error } = await supabaseClient
+                    .from(_g(3))
+                    .update({ [_g(8)]: null })
+                    .eq(_g(4), licenseKey)
+                    .eq(_g(5), password);
+
+                if (error) throw error;
+
+                await loadAllSavedKeys();
+
+                const toast = document.getElementById("toast");
+                toast.style.display = "block";
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 3000);
+
+            } catch (err) {
+                console.error(err);
+                alert("Failed to unbind HWID: " + err.message);
+            } finally {
+                if (resetBtn) {
+                    resetBtn.disabled = false;
+                    resetBtn.innerText = "Reset HWID";
+                }
+            }
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const toast = document.getElementById("toast");
+                toast.innerText = "Copied to clipboard!";
+                toast.style.display = "block";
+                setTimeout(() => {
+                    toast.style.display = "none";
+                    toast.innerText = "HWID Reset successful! Key is now unbound.";
+                }, 2000);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function logout() {
+            savedKeys = [];
+            authenticatedKeyData = [];
+            localStorage.removeItem(_g(9));
+            document.getElementById("input-license").value = "";
+            document.getElementById("input-password").value = "";
+            document.getElementById("dashboard-container").classList.add("hidden");
+            document.getElementById("sidebar-logout").classList.add("hidden");
+            document.getElementById("add-licence-btn").classList.add("hidden");
+            document.getElementById("login-container").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
