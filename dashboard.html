@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lithium — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #000000;
+            --panel: #0a0a0a;
+            --panel-2: #101010;
+            --border: rgba(236, 72, 153, 0.12);
+            --border-soft: rgba(255,255,255,0.07);
+            --text: #f3f5f7;
+            --muted: #8b8b93;
+            --accent: #ec4899;
+            --accent-hover: #f472b6;
+            --accent-strong: #db2777;
+            --green: #34d399;
+            --red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            border-bottom: 1px solid var(--border-soft);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            background: rgba(0,0,0,0.6);
+        }
+        .navbar-inner {
+            max-width: 1280px; margin: 0 auto;
+            height: 60px; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .brand { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: #fff; }
+        .brand span { color: var(--accent); }
+        .nav-links { display: flex; align-items: center; gap: 28px; }
+        .nav-links a { font-size: 13px; font-weight: 500; color: var(--muted); transition: color 0.15s; }
+        .nav-links a:hover { color: #fff; }
+        .nav-links a.on { color: #fff; }
+        .sign-out {
+            font-size: 12px; font-weight: 600; color: var(--muted);
+            background: none; border: none; cursor: pointer; font-family: inherit;
+            transition: color 0.15s;
+        }
+        .sign-out:hover { color: var(--red); }
+
+        .shell { max-width: 460px; margin: 0 auto; padding: 0 24px; }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 36px 32px;
+        }
+
+        .centered {
+            min-height: calc(100vh - 60px);
+            display: flex; flex-direction: column;
+            justify-content: center;
+        }
+
+        /* ── login ── */
+        .login-logo {
+            width: 44px; height: 44px; margin: 0 auto 18px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--accent-strong);
+            color: #fff; font-weight: 800; font-size: 16px;
+        }
+        .login-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .login-sub { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 28px; }
+        .error-banner {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            color: #fca5a5;
+            padding: 10px 14px; border-radius: 8px;
+            font-size: 11px; text-align: center;
+            display: none; margin-bottom: 16px;
+        }
+        .field { margin-bottom: 14px; }
+        .field label {
+            display: block; font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--muted); margin-bottom: 8px;
+        }
+        .field input {
+            width: 100%;
+            background: var(--panel-2);
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            padding: 13px 14px;
+            color: #fff; font-size: 13px; font-family: inherit;
+            outline: none; transition: border-color 0.15s;
+        }
+        .field input:focus { border-color: var(--accent); }
+        .btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%;
+            height: 42px; border-radius: 8px;
+            font-size: 13px; font-weight: 700; font-family: inherit;
+            cursor: pointer; border: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .btn-primary { background: var(--accent-strong); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-soft);
+            color: var(--muted); font-weight: 600;
+        }
+        .btn-outline:hover { border-color: var(--border); color: #fff; }
+        .btn-danger { color: var(--red); }
+        .btn-danger:hover { border-color: rgba(239,68,68,0.4); }
+
+        /* ── dashboard card ── */
+        .status-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .status-name { font-size: 15px; font-weight: 700; }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 11px; font-weight: 700;
+            color: var(--green);
+            border: 1px solid rgba(52,211,153,0.3);
+            background: rgba(52,211,153,0.06);
+            padding: 5px 11px; border-radius: 999px;
+        }
+        .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+        .key-box {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--panel-2);
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            padding: 13px 14px; margin-bottom: 24px;
+        }
+        .key-box code {
+            flex: 1; font-size: 12px; color: #fff;
+            font-family: inherit; word-break: break-all;
+        }
+        .copy-btn {
+            background: none; border: none; cursor: pointer;
+            color: var(--muted); padding: 4px;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: color 0.15s;
+        }
+        .copy-btn:hover { color: #fff; }
+
+        .meta { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+        .meta-row { display: flex; justify-content: space-between; align-items: center; }
+        .meta-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+        .meta-value { font-size: 13px; color: #fff; font-weight: 600; text-align: right; }
+        .meta-value.green { color: var(--green); }
+        .meta-value.red { color: var(--red); }
+
+        .actions { display: flex; flex-direction: column; gap: 10px; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="brand">lithium<span>.gg</span></a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html" class="on">Dashboard</a>
+                <a href="https://discord.gg/2WXNQyR8nq" target="_blank">Discord</a>
+                <button id="nav-signout" class="sign-out hidden" onclick="logout()">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="shell centered">
+
+        <div id="login-container" class="panel">
+            <div class="login-logo">li</div>
+            <div class="login-title">Authenticate License</div>
+            <div class="login-sub">Enter your key &amp; password to access the dashboard</div>
+            <div id="login-error" class="error-banner"></div>
+            <div class="field">
+                <label for="input-license">License Key</label>
+                <input type="text" id="input-license" placeholder="LITHIUM-XXXX-XXXX">
+            </div>
+            <div class="field">
+                <label for="input-password">Password</label>
+                <input type="password" id="input-password" placeholder="••••••••">
+            </div>
+            <button onclick="attemptAuth()" class="btn btn-primary">Sign In</button>
+        </div>
+
+        <div id="dashboard-container" class="hidden"></div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const _k = [
+            "aHR0cHM6Ly9tYWZhZnZqeGtodGJ5YWNwbnN3YS5zdXBhYmFzZS5jbw==",
+            "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW0xaFptRm1kbXA0YTJoMFlubGhZM0J1YzNkaElpd2ljbTlzWlNJNklt",
+            "RnViMjRpTENKcFlYUWlPakUzTnpVNU5UTXpNRFFzSW1WNGNDSTZNakE1TVRVeU9UTXdOSDAudC1TVTM2UTJ1Tm5PT1B2Nk0wVmpTSjZBSF9qaF9ua2tUdEM4Szh2OE9LWQ==",
+            "bGljZW5zZV9rZXlz",
+            "bGljZW5zZV9rZXk=",
+            "cGFzc3dvcmQ=",
+            "aXNfYWN0aXZl",
+            "ZXhwaXJlc19hdA==",
+            "aHdpZA==",
+            "aW5kaWNhX3NhdmVkX2tleXM="
+        ];
+        function _g(i) {
+            return atob(_k[i]);
+        }
+
+        let savedKeys = [];
+        let authenticatedKeyData = [];
+
+        window.addEventListener("DOMContentLoaded", () => {
+            try {
+                const stored = localStorage.getItem(_g(9));
+                if (stored) {
+                    savedKeys = JSON.parse(stored);
+                    if (savedKeys.length > 0) {
+                        loadAllSavedKeys();
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        });
+
+        async function loadAllSavedKeys() {
+            if (savedKeys.length === 0) return;
+
+            const keysList = savedKeys.map(k => k.key);
+            try {
+                const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
+                const { data, error } = await supabaseClient
+                    .from(_g(3))
+                    .select('*')
+                    .in(_g(4), keysList);
+
+                if (error) throw error;
+
+                authenticatedKeyData = (data || []).filter(row => {
+                    const saved = savedKeys.find(sk => sk.key === row[_g(4)]);
+                    return saved && saved.pwd === row[_g(5)];
+                });
+
+                if (authenticatedKeyData.length > 0) {
+                    populateDashboard();
+                    document.getElementById("login-container").classList.add("hidden");
+                    document.getElementById("dashboard-container").classList.remove("hidden");
+                    document.getElementById("nav-signout").classList.remove("hidden");
+                } else {
+                    logout();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function attemptAuth() {
+            const licenseKey = document.getElementById("input-license").value.trim();
+            const password = document.getElementById("input-password").value.trim();
+            const errorEl = document.getElementById("login-error");
+
+            errorEl.style.display = "none";
+
+            if (!licenseKey || !password) {
+                errorEl.innerText = "Please fill in both fields.";
+                errorEl.style.display = "block";
+                return;
+            }
+
+            try {
+                const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
+                const { data, error } = await supabaseClient
+                    .from(_g(3))
+                    .select('*')
+                    .eq(_g(4), licenseKey)
+                    .eq(_g(5), password)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("Invalid credentials");
+                }
+
+                if (!data[_g(6)]) {
+                    errorEl.innerText = "License has been disabled by administrators.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                if (data[_g(7)] && new Date(data[_g(7)]) < new Date()) {
+                    errorEl.innerText = "License key has expired.";
+                    errorEl.style.display = "block";
+                    return;
+                }
+
+                if (!savedKeys.some(k => k.key === licenseKey)) {
+                    savedKeys.push({ key: licenseKey, pwd: password });
+                    localStorage.setItem(_g(9), JSON.stringify(savedKeys));
+                }
+
+                await loadAllSavedKeys();
+            } catch (err) {
+                console.error(err);
+                errorEl.innerText = "Invalid license key or password.";
+                errorEl.style.display = "block";
+            }
+        }
+
+        function populateDashboard() {
+            const container = document.getElementById("dashboard-container");
+            container.innerHTML = "";
+
+            if (!authenticatedKeyData || authenticatedKeyData.length === 0) {
+                container.innerHTML = `<div class="panel" style="text-align:center;color:var(--muted);font-size:13px;">No active licenses.</div>`;
+                return;
+            }
+
+            document.getElementById("nav-signout").classList.remove("hidden");
+
+            authenticatedKeyData.forEach(key => {
+                const expDateStr = key[_g(7)] ? new Date(key[_g(7)]).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Lifetime Access";
+                const durationBadge = key[_g(7)] ? "Real Time" : "Lifetime";
+                const timeLeft = getTimeLeft(key[_g(7)]);
+
+                const copyIconSvg = `
+                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                `;
+
+                const panel = document.createElement("div");
+                panel.className = "panel";
+                panel.innerHTML = `
+                    <div class="status-row">
+                        <span class="status-name">Lithium</span>
+                        <span class="status-pill"><span class="dot"></span> Active</span>
+                    </div>
+
+                    <div class="key-box">
+                        <code>${key[_g(4)]}</code>
+                        <button class="copy-btn" onclick="copyToClipboard('${key[_g(4)]}')" title="Copy Key">${copyIconSvg}</button>
+                    </div>
+
+                    <div class="meta">
+                        <div class="meta-row">
+                            <span class="meta-label">Product</span>
+                            <span class="meta-value">Lithium</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Plan</span>
+                            <span class="meta-value">${durationBadge}</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Expires</span>
+                            <span class="meta-value">${expDateStr}</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Time Left</span>
+                            <span class="meta-value ${timeLeft.includes('Expired') ? 'red' : 'green'}">${timeLeft}</span>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <a href="https://drive.google.com/file/d/1yfH5y0jSU1GV3RbJe6mUes-Exybw0HQS/view?usp=sharing" target="_blank" class="btn btn-primary">Download Loader</a>
+                        ${key[_g(8)]
+                            ? `<button id="reset-hwid-btn-${key.id}" onclick="unbindHWID('${key[_g(4)]}', '${key[_g(5)]}', ${key.id})" class="btn btn-outline btn-danger">Reset HWID</button>`
+                            : `<button class="btn btn-outline" disabled style="opacity:0.35;cursor:not-allowed;">Reset HWID</button>`
+                        }
+                    </div>
+                `;
+                container.appendChild(panel);
+            });
+        }
+
+        function getTimeLeft(expiryString) {
+            if (!expiryString) return "Lifetime Access";
+            const expiry = new Date(expiryString);
+            const now = new Date();
+            const diffMs = expiry - now;
+
+            if (diffMs <= 0) return "Expired";
+
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+            let parts = [];
+            if (diffDays > 0) parts.push(`${diffDays}d`);
+            if (diffHours > 0) parts.push(`${diffHours}h`);
+            if (diffMins > 0) parts.push(`${diffMins}m`);
+
+            return parts.join(" ") + " left";
+        }
+
+        async function unbindHWID(licenseKey, password, rowId) {
+            const resetBtn = document.getElementById(`reset-hwid-btn-${rowId}`);
+            if (!resetBtn) return;
+
+            resetBtn.disabled = true;
+            resetBtn.innerText = "Releasing...";
+
+            try {
+                const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
+                const { error } = await supabaseClient
+                    .from(_g(3))
+                    .update({ [_g(8)]: null })
+                    .eq(_g(4), licenseKey)
+                    .eq(_g(5), password);
+
+                if (error) throw error;
+
+                await loadAllSavedKeys();
+            } catch (err) {
+                console.error(err);
+                alert("Failed to unbind HWID: " + err.message);
+            } finally {
+                if (resetBtn) {
+                    resetBtn.disabled = false;
+                    resetBtn.innerText = "Reset HWID";
+                }
+            }
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function logout() {
+            savedKeys = [];
+            authenticatedKeyData = [];
+            localStorage.removeItem(_g(9));
+            document.getElementById("input-license").value = "";
+            document.getElementById("input-password").value = "";
+            document.getElementById("dashboard-container").classList.add("hidden");
+            document.getElementById("nav-signout").classList.add("hidden");
+            document.getElementById("login-container").classList.remove("hidden");
+        }
+    </script>
+</body>
+</html>
