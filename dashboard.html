@@ -10,195 +10,301 @@
     <style>
         :root {
             --bg: #030303;
-            --surface: #09090b;
-            --surface-raised: #0e0e11;
-            --border: rgba(255,255,255,0.06);
-            --border-glow: rgba(219,39,119,0.12);
+            --main-bg: #030303;
+            --card: #0B0B0B;
+            --card-border: rgba(255,255,255,0.06);
             --accent: #DB2777;
             --accent-hover: #EC4899;
-            --accent-strong: #BE185D;
-            --accent-glow: rgba(219,39,119,0.15);
-            --text: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-tertiary: #71717a;
             --green: #34d399;
-            --red: #f87171;
-            --radius-sm: 8px;
-            --radius: 12px;
-            --radius-lg: 16px;
+            --amber: #f59e0b;
+            --text: #fafafa;
+            --secondary: #a1a1aa;
+            --muted: #71717a;
+            --sidebar-w: 240px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--main-bg); color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
             -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            letter-spacing: -0.01em;
+            min-height: 100vh; display: flex;
         }
         a { text-decoration: none; color: inherit; }
-        button { cursor: pointer; font: inherit; border: none; outline: none; background: none; color: inherit; }
+        button { cursor: pointer; font: inherit; border: none; background: none; color: inherit; }
 
-        .navbar {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(32px) saturate(180%);
-            -webkit-backdrop-filter: blur(32px) saturate(180%);
-            background: rgba(3,3,3,0.72);
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-w); min-height: 100vh; flex-shrink: 0;
+            background: var(--bg); border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; padding: 20px 16px;
+            position: fixed; top: 0; left: 0; bottom: 0; z-index: 40;
         }
-        .navbar-inner {
-            max-width: 1200px; margin: 0 auto;
-            height: 60px; padding: 0 32px;
-            display: flex; align-items: center; justify-content: space-between;
+        .side-logo {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 28px; padding: 0 4px;
         }
-        .brand { font-family: 'Fira Code', monospace; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.03em; }
-        .brand span { color: var(--accent); }
-        .nav-links { display: flex; align-items: center; gap: 36px; }
-        .nav-links a { font-size: 13px; font-weight: 500; color: var(--text-tertiary); transition: color 0.2s; }
-        .nav-links a:hover { color: #fff; }
-        .nav-links a.on { color: #fff; }
-        .sign-out { font-size: 12px; font-weight: 600; color: var(--text-tertiary); transition: color 0.2s; }
-        .sign-out:hover { color: var(--red); }
-
-        .shell { max-width: 480px; margin: 0 auto; padding: 0 24px; }
-
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 40px 32px;
-        }
-        .centered {
-            min-height: calc(100vh - 60px);
-            display: flex; flex-direction: column; justify-content: center;
-        }
-
-        .login-logo {
-            width: 48px; height: 48px; margin: 0 auto 20px;
-            border-radius: var(--radius);
+        .side-logo .icon {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-            color: #fff; font-family: 'Fira Code', monospace; font-weight: 800; font-size: 18px;
-            box-shadow: 0 0 30px var(--accent-glow);
+            background: var(--accent); color: #fff;
+            font: 800 14px 'Fira Code', monospace;
         }
-        .login-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.03em; }
-        .login-sub { text-align: center; color: var(--text-tertiary); font-size: 13px; margin-bottom: 28px; }
-        .error-banner {
-            background: rgba(248,113,113,0.06);
-            border: 1px solid rgba(248,113,113,0.15);
-            color: #fca5a5;
-            padding: 10px 14px; border-radius: var(--radius-sm);
-            font-size: 12px; text-align: center;
-            display: none; margin-bottom: 16px;
+        .side-logo .label { font: 700 15px 'Inter', sans-serif; letter-spacing: -.02em; }
+        .side-logo .label span { color: var(--accent); }
+        .side-section { font: 600 10px 'Fira Code', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; padding: 20px 6px 8px; }
+        .side-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
+            color: var(--secondary); transition: all .15s;
         }
-        .field { margin-bottom: 16px; }
+        .side-item:hover { background: rgba(255,255,255,0.04); color: #fff; }
+        .side-item.active { background: var(--card); color: #fff; border-left: 2px solid var(--accent); border-radius: 8px 8px 8px 4px; }
+        .side-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.6; }
+        .side-item.active svg { opacity: 1; color: var(--accent); }
+
+        .side-promo {
+            margin-top: auto; padding: 14px; border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .side-promo p { font-size: 11px; color: #aaa; line-height: 1.5; margin-bottom: 10px; }
+        .side-promo button {
+            width: 100%; padding: 8px 0; border-radius: 999px;
+            background: rgba(255,255,255,0.08); color: #fff; font-size: 11px; font-weight: 600;
+            transition: transform .15s;
+        }
+        .side-promo button:hover { transform: scale(1.02); background: rgba(255,255,255,0.12); }
+        .side-user {
+            display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 8px 6px;
+            border-radius: 8px;
+        }
+        .side-user .avatar {
+            width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+            background: #333; display: flex; align-items: center; justify-content: center;
+            font-size: 11px; color: var(--muted);
+        }
+        .side-user .info { flex: 1; min-width: 0; }
+        .side-user .name { font-size: 11px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .side-user .role { font-size: 10px; color: var(--muted); }
+
+        /* ── Main ── */
+        .main {
+            flex: 1; margin-left: var(--sidebar-w); padding: 32px 36px; min-width: 0;
+        }
+        .topbar {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
+        }
+        .topbar-btn {
+            width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            color: var(--muted); transition: all .15s;
+        }
+        .topbar-btn:hover { background: rgba(255,255,255,0.04); color: #fff; }
+        .topbar-path { font-size: 12px; color: var(--muted); font-family: 'Fira Code', monospace; }
+
+        .page-head { margin-bottom: 28px; }
+        .page-head h1 { font-size: 28px; font-weight: 700; letter-spacing: -.04em; }
+        .page-head p { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+        .orders { display: flex; flex-direction: column; gap: 12px; }
+
+        .order-card {
+            display: flex; gap: 20px; align-items: center;
+            background: var(--card); border: 1px solid var(--card-border);
+            border-radius: 14px; padding: 18px 22px;
+            transition: border-color .2s;
+        }
+        .order-card:hover { border-color: rgba(255,255,255,0.1); }
+
+        .order-thumb {
+            width: 80px; height: 104px; border-radius: 8px; flex-shrink: 0;
+            background: #1E1E1E;
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+        .order-thumb .game-label {
+            font: 600 7px 'Fira Code', monospace; color: var(--muted);
+            text-align: center; text-transform: uppercase; line-height: 1.2;
+        }
+        .order-thumb .game-label strong {
+            display: block; font-size: 8px; color: #fff; font-weight: 700; margin-bottom: 1px;
+        }
+
+        .order-col { min-width: 0; }
+        .order-col.product { flex: 1.2; }
+        .order-col.meta   { flex: 1; }
+        .order-col.links  { flex: 0 0 140px; }
+
+        .order-label { font: 600 9px 'Fira Code', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+        .order-value { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .order-tags { display: flex; gap: 5px; }
+        .order-tag {
+            font: 600 9px 'Fira Code', monospace; padding: 2px 7px; border-radius: 4px;
+            background: rgba(255,255,255,0.05); color: var(--secondary);
+        }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .status-dot.green { background: var(--green); box-shadow: 0 0 6px rgba(52,211,153,0.4); }
+        .status-dot.amber { background: #888; box-shadow: 0 0 6px rgba(255,255,255,0.15); }
+        .status-text { font-size: 12px; font-weight: 600; }
+        .status-text.green { color: var(--green); }
+        .status-text.amber { color: #888; }
+
+        .key-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 6px; padding: 5px 10px; max-width: 100%;
+        }
+        .key-pill code {
+            font: 11px 'Fira Code', monospace; color: #fff;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .key-pill button {
+            color: var(--muted); padding: 1px; display: flex; align-items: center;
+            flex-shrink: 0; transition: color .15s;
+        }
+        .key-pill button:hover { color: #fff; }
+
+        .link-stack { display: flex; flex-direction: column; gap: 5px; }
+        .link-btn {
+            display: flex; align-items: center; justify-content: center;
+            height: 30px; padding: 0 12px; border-radius: 6px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+            font-size: 11px; font-weight: 600; color: var(--secondary);
+            transition: all .15s;
+        }
+        .link-btn:hover { background: rgba(255,255,255,0.07); color: #fff; border-color: rgba(255,255,255,0.12); }
+
+        .auth-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+        }
+        .auth-card {
+            width: 400px; padding: 40px 34px; border-radius: 18px;
+            background: var(--card); border: 1px solid var(--card-border);
+        }
+        .auth-icon {
+            width: 44px; height: 44px; margin: 0 auto 20px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--accent);
+            font: 800 17px 'Fira Code', monospace; color: #fff;
+        }
+        .auth-title { text-align: center; font-size: 19px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+        .auth-sub { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 24px; }
+        .error-msg {
+            background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.15);
+            color: #fca5a5; padding: 10px 14px; border-radius: 8px;
+            font-size: 11px; text-align: center; display: none; margin-bottom: 14px;
+        }
+        .field { margin-bottom: 14px; }
         .field label {
-            display: block; font-size: 11px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.08em;
-            color: var(--text-tertiary); margin-bottom: 8px;
-            font-family: 'Fira Code', monospace;
+            display: block; font: 600 10px 'Fira Code', monospace; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--muted); margin-bottom: 7px;
         }
         .field input {
-            width: 100%;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 13px 14px;
-            color: #fff; font-size: 14px; font-family: inherit;
-            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; background: var(--bg); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px; padding: 12px 14px; color: #fff; font-size: 13px;
+            outline: none; transition: border-color .2s;
         }
-        .field input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(219,39,119,0.1);
-        }
-        .btn {
+        .field input:focus { border-color: var(--accent); }
+        .btn-fill {
+            width: 100%; height: 42px; border-radius: 8px;
+            background: var(--accent); color: #fff; font-size: 13px; font-weight: 700;
             display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 44px; border-radius: var(--radius-sm);
-            font-size: 14px; font-weight: 700; font-family: inherit;
-            cursor: pointer; border: none;
-            transition: all 0.2s;
+            transition: background .2s;
         }
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 0 24px var(--accent-glow); }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border); color: var(--text-secondary); font-weight: 600;
-        }
-        .btn-outline:hover { border-color: rgba(255,255,255,0.15); color: #fff; }
-        .btn-danger { color: var(--red); border-color: rgba(248,113,113,0.15); }
-        .btn-danger:hover { border-color: rgba(248,113,113,0.35); }
+        .btn-fill:hover { background: var(--accent-hover); }
 
-        .status-row {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 24px;
-        }
-        .status-name { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
-        .status-pill {
-            display: inline-flex; align-items: center; gap: 7px;
-            font-size: 11px; font-weight: 700; font-family: 'Fira Code', monospace;
-            color: var(--green);
-            border: 1px solid rgba(52,211,153,0.2);
-            background: rgba(52,211,153,0.06);
-            padding: 5px 11px; border-radius: 999px;
-        }
-        .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px rgba(52,211,153,0.3); }
-        .key-box {
-            display: flex; align-items: center; gap: 10px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 13px 14px; margin-bottom: 24px;
-        }
-        .key-box code { flex: 1; font-size: 12px; color: #fff; font-family: 'Fira Code', monospace; word-break: break-all; }
-        .copy-btn {
-            background: none; border: none; cursor: pointer;
-            color: var(--text-tertiary); padding: 4px;
-            display: inline-flex; align-items: center; justify-content: center;
-            transition: color 0.2s;
-        }
-        .copy-btn:hover { color: #fff; }
-        .meta { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
-        .meta-row { display: flex; justify-content: space-between; align-items: center; }
-        .meta-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; font-family: 'Fira Code', monospace; }
-        .meta-value { font-size: 13px; color: #fff; font-weight: 600; text-align: right; }
-        .meta-value.green { color: var(--green); }
-        .meta-value.red { color: var(--red); }
-        .actions { display: flex; flex-direction: column; gap: 10px; }
         .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 24px 16px; }
+            .order-card { flex-direction: column; align-items: stretch; }
+            .order-col.links { flex: unset; }
+            .link-stack { flex-direction: row; flex-wrap: wrap; }
+            .link-btn { flex: 1; }
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-inner">
-            <a href="index.html" class="brand">indica<span>.</span></a>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="https://discord.gg/2WXNQyR8nq" target="_blank" rel="noopener">Store</a>
-                <a href="dashboard.html" class="on">Dashboard</a>
-                <a href="https://discord.gg/2WXNQyR8nq" target="_blank">Discord</a>
-                <button id="nav-signout" class="sign-out hidden" onclick="logout()">Sign Out</button>
+    <!-- ═══ Sidebar ═══ -->
+    <aside class="sidebar">
+        <div class="side-logo">
+            <div class="icon">in</div>
+            <div class="label">indica<span>.</span></div>
+        </div>
+        <div class="side-section">Menu</div>
+        <a href="index.html" class="side-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+        </a>
+        <a href="dashboard.html" class="side-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Orders
+        </a>
+        <div class="side-section">Links</div>
+        <a href="https://discord.gg/2WXNQyR8nq" target="_blank" class="side-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Discord
+        </a>
+        <a href="https://discord.gg/2WXNQyR8nq" target="_blank" class="side-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Support
+        </a>
+        <a href="https://indicacheat.mysellauth.com/products" class="side-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Store
+        </a>
+        <div class="side-promo">
+            <p>Need a free key? Check out our media program to enroll now!</p>
+            <button onclick="window.open('https://discord.gg/2WXNQyR8nq','_blank')">Learn More</button>
+        </div>
+        <div class="side-user" id="side-user" style="display:none;">
+            <div class="avatar">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="info">
+                <div class="name" id="side-email">User</div>
+                <div class="role">Member</div>
             </div>
         </div>
-    </nav>
+    </aside>
 
-    <div class="shell centered">
-        <div id="login-container" class="panel">
-            <div class="login-logo">in</div>
-            <div class="login-title">Authenticate</div>
-            <div class="login-sub">Enter your license key to access the dashboard</div>
-            <div id="login-error" class="error-banner"></div>
-            <div class="field">
-                <label for="input-license">License Key</label>
-                <input type="text" id="input-license" placeholder="INDICA-XXXX-XXXX">
-            </div>
-            <div class="field">
-                <label for="input-password">Password</label>
-                <input type="password" id="input-password" placeholder="••••••••">
-            </div>
-            <button onclick="attemptAuth()" class="btn btn-primary">Sign In</button>
+    <!-- ═══ Main Content ═══ -->
+    <main class="main">
+        <div class="topbar">
+            <button class="topbar-btn">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+            </button>
+            <span class="topbar-path">/ Orders</span>
         </div>
 
-        <div id="dashboard-container" class="hidden"></div>
+        <div class="page-head">
+            <h1>Orders</h1>
+            <p>View all your licenses and completed orders here.</p>
+        </div>
+
+        <div class="orders" id="orders-list"></div>
+    </main>
+
+    <!-- ═══ Auth Overlay ═══ -->
+    <div class="auth-overlay hidden" id="auth-overlay">
+        <div class="auth-card">
+            <div class="auth-icon">in</div>
+            <div class="auth-title">Authenticate</div>
+            <div class="auth-sub">Enter your license key to access your orders</div>
+            <div id="login-error" class="error-msg"></div>
+            <div class="field">
+                <label for="input-key">License Key</label>
+                <input type="text" id="input-key" placeholder="INDICA-XXXX-XXXX">
+            </div>
+            <div class="field">
+                <label for="input-pwd">Password</label>
+                <input type="password" id="input-pwd" placeholder="••••••••">
+            </div>
+            <button onclick="attemptAuth()" class="btn-fill">Sign In</button>
+            <button onclick="closeAuth()" class="btn-fill" style="background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted);margin-top:8px;">Cancel</button>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -223,42 +329,43 @@
         window.addEventListener("DOMContentLoaded", () => {
             try {
                 const stored = localStorage.getItem(_g(9));
-                if (stored) {
-                    savedKeys = JSON.parse(stored);
-                    if (savedKeys.length > 0) loadAllSavedKeys();
-                }
-            } catch (e) { console.error(e); }
+                if (stored) { savedKeys = JSON.parse(stored); if (savedKeys.length > 0) loadAllSavedKeys(); }
+            } catch (e) {}
+            if (savedKeys.length === 0) showAuth();
         });
 
+        function showAuth() {
+            document.getElementById("auth-overlay").classList.remove("hidden");
+            document.getElementById("input-key").value = "";
+            document.getElementById("input-pwd").value = "";
+            document.getElementById("login-error").style.display = "none";
+        }
+        function closeAuth() { document.getElementById("auth-overlay").classList.add("hidden"); }
+
         async function loadAllSavedKeys() {
-            if (savedKeys.length === 0) return;
-            const keysList = savedKeys.map(k => k.key);
+            if (savedKeys.length === 0) { showAuth(); return; }
             try {
                 const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
-                const { data, error } = await supabaseClient.from(_g(3)).select('*').in(_g(4), keysList);
+                const { data, error } = await supabaseClient.from(_g(3)).select('*').in(_g(4), savedKeys.map(k => k.key));
                 if (error) throw error;
                 authenticatedKeyData = (data || []).filter(row => {
                     const saved = savedKeys.find(sk => sk.key === row[_g(4)]);
                     return saved && saved.pwd === row[_g(5)];
                 });
                 if (authenticatedKeyData.length > 0) {
-                    populateDashboard();
-                    document.getElementById("login-container").classList.add("hidden");
-                    document.getElementById("dashboard-container").classList.remove("hidden");
-                    document.getElementById("nav-signout").classList.remove("hidden");
+                    closeAuth();
+                    renderOrders();
+                    document.getElementById("side-user").style.display = "flex";
                 } else { logout(); }
             } catch (err) { console.error(err); }
         }
 
         async function attemptAuth() {
-            const licenseKey = document.getElementById("input-license").value.trim();
-            const password = document.getElementById("input-password").value.trim();
+            const licenseKey = document.getElementById("input-key").value.trim();
+            const password = document.getElementById("input-pwd").value.trim();
             const errorEl = document.getElementById("login-error");
             errorEl.style.display = "none";
-            if (!licenseKey || !password) {
-                errorEl.innerText = "Please fill in both fields.";
-                errorEl.style.display = "block"; return;
-            }
+            if (!licenseKey || !password) { errorEl.innerText = "Please fill in both fields."; errorEl.style.display = "block"; return; }
             try {
                 const supabaseClient = supabase.createClient(_g(0), _g(1) + _g(2));
                 const { data, error } = await supabaseClient.from(_g(3)).select('*').eq(_g(4), licenseKey).eq(_g(5), password).single();
@@ -273,63 +380,119 @@
             } catch (err) { console.error(err); errorEl.innerText = "Invalid license key or password."; errorEl.style.display = "block"; }
         }
 
-        function populateDashboard() {
-            const container = document.getElementById("dashboard-container");
+        function renderOrders() {
+            const container = document.getElementById("orders-list");
             container.innerHTML = "";
             if (!authenticatedKeyData || authenticatedKeyData.length === 0) {
-                container.innerHTML = `<div class="panel" style="text-align:center;color:var(--text-tertiary);font-size:13px;">No active licenses.</div>`;
+                container.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:40px;">No licenses found. <a href="#" onclick="showAuth();return false;" style="color:var(--accent);">Add one</a></div>';
                 return;
             }
-            document.getElementById("nav-signout").classList.remove("hidden");
-            authenticatedKeyData.forEach(key => {
-                const expDateStr = key[_g(7)] ? new Date(key[_g(7)]).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Lifetime";
-                const durationBadge = key[_g(7)] ? "Subscription" : "Lifetime";
+
+            const copySvg = '<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
+            authenticatedKeyData.forEach((key, idx) => {
+                const expDate = key[_g(7)] ? new Date(key[_g(7)]) : null;
+                const expStr = expDate ? expDate.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }) : "Lifetime";
+                const plan = key[_g(7)] ? "Subscription" : "Lifetime";
                 const timeLeft = getTimeLeft(key[_g(7)]);
-                const copyIcon = `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-                const panel = document.createElement("div");
-                panel.className = "panel";
-                panel.innerHTML = `
-                    <div class="status-row">
-                        <span class="status-name">indica</span>
-                        <span class="status-pill"><span class="dot"></span> Active</span>
+                const isActive = key[_g(6)] && (!expDate || expDate > new Date());
+                const status = isActive ? "Undetected" : "Disabled";
+                const statusColor = isActive ? "green" : "amber";
+                const duration = expDate ? getDurationLabel(expDate) : "Lifetime";
+                const orderId = key.id || ("key-" + idx);
+
+                const card = document.createElement("div");
+                card.className = "order-card";
+                card.innerHTML = `
+                    <div class="order-thumb">
+                        <img src="download%20(1).png" alt="indica" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
                     </div>
-                    <div class="key-box">
-                        <code>${key[_g(4)]}</code>
-                        <button class="copy-btn" onclick="copyToClipboard('${key[_g(4)]}')" title="Copy Key">${copyIcon}</button>
+                    <div class="order-col product">
+                        <div class="order-label">Product</div>
+                        <div class="order-value">
+                            <strong>indica</strong>
+                            <span class="order-tags">
+                                <span class="order-tag">R6S</span>
+                                <span class="order-tag">${duration}</span>
+                            </span>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <div class="order-label">Status</div>
+                            <div class="order-value">
+                                <span class="status-dot ${statusColor}"></span>
+                                <span class="status-text ${statusColor}">${status}</span>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <div class="order-label">Key(s)</div>
+                            <div class="key-pill">
+                                <code>${key[_g(4)]}</code>
+                                <button onclick="copyText('${key[_g(4)]}')">${copySvg}</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="meta">
-                        <div class="meta-row"><span class="meta-label">Product</span><span class="meta-value">indica</span></div>
-                        <div class="meta-row"><span class="meta-label">Plan</span><span class="meta-value">${durationBadge}</span></div>
-                        <div class="meta-row"><span class="meta-label">Expires</span><span class="meta-value">${expDateStr}</span></div>
-                        <div class="meta-row"><span class="meta-label">Time Left</span><span class="meta-value ${timeLeft.includes('Expired') ? 'red' : 'green'}">${timeLeft}</span></div>
+                    <div class="order-col meta">
+                        <div class="order-label">HWID</div>
+                        <div style="font:11px 'Fira Code',monospace;color:var(--secondary);word-break:break-all;">${key[_g(8)] ? escapeHtml(key[_g(8)]) : 'Not bound'}</div>
+                        <div style="margin-top:10px;">
+                            <div class="order-label">Date</div>
+                            <div style="font-size:12px;color:var(--secondary);">${expStr}</div>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <div class="order-label">Time Left</div>
+                            <div style="font-size:12px;font-weight:600;color:${timeLeft.includes('Expired') ? '#888' : '#fff'};">${timeLeft}</div>
+                        </div>
+                        <button onclick="removeLicense('${key[_g(4)]}')" style="margin-top:10px;font-size:10px;color:var(--muted);">Remove</button>
                     </div>
-                    <div class="actions">
-                        <a href="https://drive.google.com/file/d/1yfH5y0jSU1GV3RbJe6mUes-Exybw0HQS/view?usp=sharing" target="_blank" class="btn btn-primary">Download Loader</a>
-                        ${key[_g(8)] ? `<button id="reset-btn-${key.id}" onclick="unbindHWID('${key[_g(4)]}', '${key[_g(5)]}', ${key.id})" class="btn btn-outline btn-danger">Reset HWID</button>` : `<button class="btn btn-outline" disabled style="opacity:0.3;cursor:not-allowed;">Reset HWID</button>`}
+                    <div class="order-col links">
+                        <div class="order-label" style="margin-bottom:6px;">Links</div>
+                        <div class="link-stack">
+                            <a href="https://drive.google.com/file/d/1yfH5y0jSU1GV3RbJe6mUes-Exybw0HQS/view?usp=sharing" target="_blank" class="link-btn">Loader</a>
+                            ${key[_g(8)] ? `<button id="rst-${key.id||idx}" onclick="unbindHWID('${key[_g(4)]}','${key[_g(5)]}',${key.id||idx})" class="link-btn">Reset HWID</button>` : '<button class="link-btn" disabled style="opacity:0.3;cursor:not-allowed;">Reset HWID</button>'}
+                            <a href="https://discord.gg/2WXNQyR8nq" target="_blank" class="link-btn">Tutorial</a>
+                        </div>
                     </div>
                 `;
-                container.appendChild(panel);
+                container.appendChild(card);
             });
+        }
+
+        function getDurationLabel(expDate) {
+            if (!expDate) return "Lifetime";
+            const diffDays = Math.ceil((expDate - new Date()) / 86400000);
+            if (diffDays <= 1) return "1 Day";
+            if (diffDays <= 7) return "1 Week";
+            if (diffDays <= 31) return "1 Month";
+            return Math.ceil(diffDays / 30) + " Month";
+        }
+
+        function removeLicense(licenseKey) {
+            savedKeys = savedKeys.filter(k => k.key !== licenseKey);
+            authenticatedKeyData = authenticatedKeyData.filter(k => k[_g(4)] !== licenseKey);
+            localStorage.setItem(_g(9), JSON.stringify(savedKeys));
+            if (authenticatedKeyData.length > 0) renderOrders();
+            else logout();
         }
 
         function getTimeLeft(expiryString) {
             if (!expiryString) return "Lifetime";
-            const expiry = new Date(expiryString);
-            const now = new Date();
-            const diffMs = expiry - now;
+            const diffMs = new Date(expiryString) - new Date();
             if (diffMs <= 0) return "Expired";
-            const diffDays = Math.floor(diffMs / 86400000);
-            const diffHours = Math.floor((diffMs % 86400000) / 3600000);
-            const diffMins = Math.floor((diffMs % 3600000) / 60000);
+            const d = Math.floor(diffMs / 86400000);
+            const h = Math.floor((diffMs % 86400000) / 3600000);
+            const m = Math.floor((diffMs % 3600000) / 60000);
             let parts = [];
-            if (diffDays > 0) parts.push(`${diffDays}d`);
-            if (diffHours > 0) parts.push(`${diffHours}h`);
-            if (diffMins > 0) parts.push(`${diffMins}m`);
+            if (d > 0) parts.push(d + "d");
+            if (h > 0) parts.push(h + "h");
+            if (m > 0) parts.push(m + "m");
             return parts.join(" ") + " left";
         }
 
+        function escapeHtml(v) { return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        async function copyText(t) { try { await navigator.clipboard.writeText(t); } catch(e) {} }
+
         async function unbindHWID(licenseKey, password, rowId) {
-            const btn = document.getElementById(`reset-btn-${rowId}`);
+            const btn = document.getElementById("rst-" + rowId);
             if (!btn) return;
             btn.disabled = true; btn.innerText = "Releasing...";
             try {
@@ -341,15 +504,12 @@
             finally { if (btn) { btn.disabled = false; btn.innerText = "Reset HWID"; } }
         }
 
-        async function copyToClipboard(text) { try { await navigator.clipboard.writeText(text); } catch (err) { console.error(err); } }
         function logout() {
             savedKeys = []; authenticatedKeyData = [];
             localStorage.removeItem(_g(9));
-            document.getElementById("input-license").value = "";
-            document.getElementById("input-password").value = "";
-            document.getElementById("dashboard-container").classList.add("hidden");
-            document.getElementById("nav-signout").classList.add("hidden");
-            document.getElementById("login-container").classList.remove("hidden");
+            document.getElementById("orders-list").innerHTML = "";
+            document.getElementById("side-user").style.display = "none";
+            showAuth();
         }
     </script>
 </body>
