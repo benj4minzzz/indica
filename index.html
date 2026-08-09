@@ -3,184 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lithium — Secure Game Enhancement</title>
+    <title>indica — Precision Game Enhancement</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #000000;
-            --bg-panel: #0a0a0a;
-            --border: rgba(255,255,255,0.10);
-            --border-hover: rgba(255,255,255,0.20);
-            --accent: #ec4899;
-            --accent-hover: #f472b6;
-            --accent-strong: #db2777;
-            --accent-soft: rgba(236,72,153,0.12);
+            --bg: #030303;
+            --surface: #09090b;
+            --surface-raised: #0e0e11;
+            --border: rgba(255,255,255,0.06);
+            --border-glow: rgba(219,39,119,0.15);
+            --accent: #DB2777;
+            --accent-hover: #EC4899;
+            --accent-strong: #BE185D;
+            --accent-glow: rgba(219,39,119,0.18);
+            --accent-soft: rgba(219,39,119,0.08);
             --text: #fafafa;
-            --muted: #a1a1aa;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #71717a;
             --green: #34d399;
-            --radius: 8px;
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
+            letter-spacing: -0.01em;
         }
         a { text-decoration: none; color: inherit; }
         button { cursor: pointer; font: inherit; border: none; outline: none; background: none; color: inherit; }
 
-        /* ── navbar ── */
         .navbar {
             position: fixed; top: 0; left: 0; right: 0; z-index: 50;
             border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            background: rgba(3,3,3,0.72);
         }
         .navbar-inner {
-            max-width: 1280px; margin: 0 auto;
-            height: 64px; padding: 0 24px;
+            max-width: 1200px; margin: 0 auto;
+            height: 60px; padding: 0 32px;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .brand {
-            font-family: 'Fira Code', ui-monospace, monospace;
-            font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em;
-        }
+        .brand { font-family: 'Fira Code', monospace; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.03em; }
         .brand span { color: var(--accent); }
-        .nav-links { display: flex; align-items: center; gap: 32px; }
-        .nav-links a {
-            font-size: 14px; font-weight: 500;
-            color: var(--muted); text-transform: lowercase;
-            transition: color 0.15s; letter-spacing: -0.01em;
-        }
+        .nav-links { display: flex; align-items: center; gap: 36px; }
+        .nav-links a { font-size: 13px; font-weight: 500; color: var(--text-tertiary); transition: color 0.2s; }
         .nav-links a:hover { color: #fff; }
-        .nav-right { display: flex; align-items: center; gap: 12px; }
-        .btn-login {
+        .nav-cta {
             display: inline-flex; align-items: center; justify-content: center;
-            height: 30px; padding: 0 12px; border-radius: 8px;
-            font-size: 13px; font-weight: 600;
-            background: var(--accent-strong); color: #fff;
-            transition: background 0.15s;
+            height: 32px; padding: 0 16px; border-radius: var(--radius-sm);
+            font-size: 12px; font-weight: 600;
+            background: var(--accent); color: #fff;
+            transition: background 0.2s, box-shadow 0.2s;
         }
-        .btn-login:hover { background: var(--accent-hover); }
+        .nav-cta:hover { background: var(--accent-hover); box-shadow: 0 0 20px var(--accent-glow); }
 
-        /* ── layout ── */
-        .wrapper { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
+        .page { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
 
-        /* ── hero ── */
-        .hero { padding: 170px 24px 90px; max-width: 720px; }
+        .hero {
+            padding: 140px 0 80px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 8px;
-            font-size: 12px; color: var(--muted);
+            font-family: 'Fira Code', monospace;
+            font-size: 11px; color: var(--text-tertiary);
             border: 1px solid var(--border); border-radius: 999px;
-            padding: 6px 12px; margin-bottom: 28px;
+            padding: 6px 14px; margin-bottom: 32px;
+            backdrop-filter: blur(12px);
         }
-        .hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+        .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px rgba(52,211,153,0.4); }
         .hero h1 {
-            font-family: 'Fira Code', ui-monospace, monospace;
-            font-size: clamp(56px, 9vw, 92px);
-            font-weight: 800; letter-spacing: -0.04em; line-height: 1;
-            margin-bottom: 28px;
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(48px, 7vw, 80px);
+            font-weight: 800; letter-spacing: -0.05em; line-height: 0.95;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #ffffff 30%, rgba(255,255,255,0.75) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .hero h1 span { color: var(--accent); }
-        .hero h1 .ver {
+        .hero h1 .accent {
+            -webkit-text-fill-color: var(--accent);
+            text-shadow: 0 0 60px rgba(219,39,119,0.3);
+        }
+        .hero .ver {
             display: inline-block;
-            color: var(--muted);
-            font-size: 14px; font-weight: 600;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px; font-weight: 600;
+            color: var(--text-tertiary);
             letter-spacing: 0;
             border: 1px solid var(--border);
             border-radius: 999px;
-            padding: 4px 10px;
-            margin-left: 6px;
-            transform: translateY(-10px);
+            padding: 3px 10px;
+            margin-left: 8px;
+            transform: translateY(-12px);
+            -webkit-text-fill-color: var(--text-tertiary);
         }
         .hero p {
-            color: var(--muted); font-size: 15px; line-height: 1.8;
-            margin: 0 0 36px; max-width: 520px;
+            color: var(--text-secondary); font-size: 15px; line-height: 1.7;
+            max-width: 480px; margin: 0 auto 36px;
         }
         .hero-actions { display: flex; gap: 12px; }
 
         .btn {
             display: inline-flex; align-items: center; justify-content: center;
-            height: 40px; padding: 0 20px; border-radius: 8px;
-            font-size: 14px; font-weight: 600; transition: all 0.15s;
+            height: 44px; padding: 0 24px; border-radius: var(--radius-sm);
+            font-size: 14px; font-weight: 600; transition: all 0.2s;
         }
-        .btn-primary { background: var(--accent-strong); color: #fff; }
-        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-primary {
+            background: var(--accent); color: #fff;
+            box-shadow: 0 0 30px rgba(219,39,119,0.15);
+        }
+        .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 0 40px rgba(219,39,119,0.25); transform: translateY(-1px); }
         .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .btn-ghost:hover { border-color: var(--border-hover); }
+        .btn-ghost:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); }
 
-        .section { padding: 80px 24px; border-top: 1px solid var(--border); }
-        .section-inner { max-width: 1280px; margin: 0 auto; }
-        .section-title {
-            font-size: 15px; font-weight: 600; color: var(--muted);
-            text-transform: lowercase; letter-spacing: -0.01em;
-            max-width: 1280px; margin: 0 auto 32px;
+        .section { padding: 80px 0; }
+        .section-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 11px; font-weight: 600; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.1em;
+            margin-bottom: 12px;
         }
-        .section-title span { color: var(--accent); }
-
-        /* ── falling Ls ── */
-        .falling-bg {
-            position: fixed; inset: 0; z-index: 0;
-            overflow: hidden; pointer-events: none;
+        .section-header {
+            display: flex; align-items: flex-end; justify-content: space-between;
+            margin-bottom: 40px;
         }
-        .falling-bg .fl {
-            position: absolute; top: -5vh;
-            color: var(--accent);
-            font-weight: 700;
-            line-height: 1;
-            opacity: 0;
-            user-select: none;
-            animation: lFall var(--dur) linear infinite;
-            animation-delay: var(--delay);
-        }
-        @keyframes lFall {
-            0%   { transform: translateY(-5vh) rotate(var(--rot-start)); opacity: 0; }
-            8%   { opacity: var(--op); }
-            85%  { opacity: var(--op); }
-            100% { transform: translateY(110vh) rotate(var(--rot-end)); opacity: 0; }
+        .section-header h2 {
+            font-size: 28px; font-weight: 700; letter-spacing: -0.03em;
         }
 
-        /* ── scroll reveal ── */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-        .fade-in.d1 { transition-delay: 0.08s; }
-        .fade-in.d2 { transition-delay: 0.16s; }
-        .fade-in.d3 { transition-delay: 0.24s; }
-
-        /* ── pricing ── */
-        .plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        @media (max-width: 900px) { .plans { grid-template-columns: 1fr; } }
-        .plan { border: 1px solid var(--border); border-radius: 10px; padding: 28px 24px; background: var(--bg-panel); display: flex; flex-direction: column; }
-        .plan.popular { border-color: rgba(236,72,153,0.5); background: rgba(236,72,153,0.04); }
-        .plan-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
-        .plan.popular .plan-name { color: var(--accent); }
-        .plan-price { font-size: 32px; font-weight: 800; color: #fff; margin: 14px 0 4px; letter-spacing: -0.03em; }
-        .plan-price span { font-size: 13px; color: var(--muted); font-weight: 500; }
-        .plan-desc { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 22px; }
-        .plan-btn { margin-top: auto; }
-
-        .footer { text-align: center; color: var(--muted); font-size: 12px; padding: 28px 24px 44px; border-top: 1px solid var(--border); }
-
-        .reviews-container {
-            width: 100%; overflow: hidden; position: relative;
-            padding: 10px 0;
-            mask-image: linear-gradient(to right, transparent 0%, #000 15%, #000 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 15%, #000 85%, transparent 100%);
+        .reviews-marquee {
+            width: 100%; overflow: hidden;
+            mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
         }
         .reviews-track {
-            display: flex; gap: 20px; width: max-content;
-            animation: marqueeScroll 45s linear infinite;
+            display: flex; gap: 16px; width: max-content;
+            animation: marqueeScroll 50s linear infinite;
         }
         .reviews-track:hover { animation-play-state: paused; }
         @keyframes marqueeScroll {
@@ -188,184 +157,77 @@
             100% { transform: translateX(-50%); }
         }
         .review-card {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 20px 24px;
-            width: 320px; flex-shrink: 0;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px 24px;
+            width: 300px; flex-shrink: 0;
             display: flex; flex-direction: column; gap: 12px;
+            transition: border-color 0.3s;
         }
-        .review-user { font-weight: 600; font-size: 14px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
-        .review-stars { color: #eab308; font-size: 12px; }
-        .review-text { color: var(--muted); font-size: 13px; line-height: 1.5; }
+        .review-card:hover { border-color: var(--border-glow); }
+        .review-user { font-weight: 600; font-size: 13px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .review-stars { color: #eab308; font-size: 11px; letter-spacing: 1px; }
+        .review-text { color: var(--text-secondary); font-size: 12px; line-height: 1.6; }
 
-        .checkout-dialog {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px); z-index: 200;
-            align-items: center; justify-content: center;
+        .footer {
+            text-align: center; color: var(--text-tertiary);
+            font-size: 12px; padding: 40px 0;
+            border-top: 1px solid var(--border);
         }
-        .checkout-box {
-            background: #0a0a0a; border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 30px;
-            width: 100%; max-width: 400px;
-            display: flex; flex-direction: column; gap: 16px;
-        }
-        .checkout-box h3 { font-size: 16px; font-weight: 700; text-align: center; }
-        .checkout-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 16px; border-radius: var(--radius);
-            border: 1px solid var(--border); cursor: pointer;
-            transition: border-color 0.15s;
-        }
-        .checkout-row:hover, .checkout-row.selected { border-color: var(--accent); }
-        .checkout-row.selected { background: var(--accent-soft); }
-        .checkout-row-title { font-weight: 600; font-size: 14px; }
-        .checkout-row-price { color: var(--accent); font-weight: 700; }
-        .checkout-pay-btn {
-            background: var(--accent); color: #fff; border: none;
-            padding: 12px; border-radius: var(--radius);
-            font-weight: 700; cursor: pointer; text-align: center;
-            transition: background 0.15s;
-        }
-        .checkout-pay-btn:hover { background: var(--accent-hover); }
-        .close-dialog { align-self: flex-end; cursor: pointer; color: var(--muted); font-size: 12px; }
-        .close-dialog:hover { color: #fff; }
-        .apply-input {
-            background: #0a0a0a; border: 1px solid var(--border);
-            border-radius: 4px; padding: 10px 14px; color: #fff;
-            font-size: 13px; outline: none;
-        }
-        .apply-input:focus { border-color: var(--accent); }
-        .footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px 0; }
     </style>
 </head>
 <body>
-    <div id="falling-bg" class="falling-bg"></div>
-
     <nav class="navbar">
         <div class="navbar-inner">
-            <a href="/" class="brand">lithium<span>.gg</span></a>
+            <a href="/" class="brand">indica<span>.</span></a>
             <div class="nav-links">
-                <a href="index.html">Store</a>
+                <a href="index.html">Home</a>
+                <a href="https://discord.gg/2WXNQyR8nq" target="_blank" rel="noopener">Store</a>
                 <a href="dashboard.html">Dashboard</a>
                 <a href="https://discord.gg/2WXNQyR8nq" target="_blank">Discord</a>
             </div>
-            <div class="nav-right">
-                <a href="dashboard.html" class="btn-login">Login</a>
-            </div>
+            <a href="dashboard.html" class="nav-cta">Dashboard</a>
         </div>
     </nav>
 
-    <div class="wrapper">
-        <div class="hero">
-            <h1>lithium<span>.</span> <span class="ver">v2.3</span></h1>
-            <p>Private build. No public releases, no leaks. Humanized aim, recoil control and keybinds that feel like you &mdash; not a script. Buy a key, load up, get in.</p>
+    <main class="page">
+        <section class="hero">
+            <div class="hero-badge"><span class="dot"></span> v2.3 — private build</div>
+            <h1>indica<span class="accent">.</span> <span class="ver">R6</span></h1>
+            <p>Undetected. Hardware-locked. Built for players who demand frame-perfect recoil control and operator-level awareness — without ever touching a public release.</p>
             <div class="hero-actions">
-                <a href="https://discord.gg/2WXNQyR8nq" target="_blank" class="btn btn-primary">Join Discord</a>
-                <a href="#" onclick="openCheckout(); return false;" class="btn btn-ghost">Purchase License</a>
+                <a href="https://discord.gg/2WXNQyR8nq" target="_blank" rel="noopener" class="btn btn-primary">Get Access</a>
+                <a href="https://discord.gg/2WXNQyR8nq" target="_blank" class="btn btn-ghost">Join Discord</a>
             </div>
-        </div>
+        </section>
 
-        <div class="section">
-            <div class="section-inner">
-                <div class="section-title fade-in"><span>pricing</span> &mdash; pick your plan</div>
-                <div class="plans">
-                    <div class="plan fade-in d1">
-                        <div class="plan-name">monthly</div>
-                        <div class="plan-price">$15<span> / month</span></div>
-                        <div class="plan-desc">Try it out. Full access, all updates, support in the discord.</div>
-                        <button class="btn btn-ghost plan-btn" onclick="openCheckout()">Get started</button>
-                    </div>
-                    <div class="plan popular fade-in d2">
-                        <div class="plan-name">quarterly</div>
-                        <div class="plan-price">$35<span> / 3 months</span></div>
-                        <div class="plan-desc">Most picked. Save $10 and keep your slot for a full season.</div>
-                        <button class="btn btn-primary plan-btn" onclick="openCheckout()">Most popular</button>
-                    </div>
-                </div>
+        <section class="section">
+            <div class="section-label">social proof</div>
+            <div class="section-header">
+                <h2>Trusted by players</h2>
             </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title fade-in"><span>reviews</span> &mdash; what members say</div>
-            <div class="reviews-container fade-in d1">
+            <div class="reviews-marquee">
                 <div class="reviews-track">
-                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Redirection layout matches the game's raw input precisely. Quick Peek mapping to U/I runs completely instantly."</p></div>
-                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Private slot integrity is solid. Syncing profiles for Ash or Jager takes seconds, and the humanized scaling matches mouse sens perfectly."</p></div>
-                    <div class="review-card"><div class="review-user"><span>jabroni000</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Holding Caps Lock to pause Quick Peek works flawlessly. Allows holding lean angles while shooting without manually toggling."</p></div>
-                    <div class="review-card"><div class="review-user"><span>epstein</span><span class="review-stars">★★★★★</span></div><p class="review-text">"The horizontal and vertical pattern sliders match my scope and grip setups exactly. Best mouse redirection script I have used."</p></div>
-                    <div class="review-card"><div class="review-user"><span>MLK</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Been on this private version for 3 months now. No detection issues and the configs save/load locally without errors."</p></div>
-                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Really impressive latency handling on Mouse 4/5. Simulating keyboard lean switches makes siege believe it's native hardware input."</p></div>
-                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"The Favorites slot details are super handy. Switching from G36C to MP5 layout in the middle of rounds works instantly."</p></div>
-                    <div class="review-card"><div class="review-user"><span>jabroni000</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Support for DPI customization and exponent sliders means I can maintain my muscle memory while keeping cursor movement clean."</p></div>
-                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Redirection layout matches the game's raw input precisely. Quick Peek mapping to U/I runs completely instantly."</p></div>
-                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Private slot integrity is solid. Syncing profiles for Ash or Jager takes seconds, and the humanized scaling matches mouse sens perfectly."</p></div>
-                    <div class="review-card"><div class="review-user"><span>jabroni000</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Holding Caps Lock to pause Quick Peek works flawlessly. Allows holding lean angles while shooting without manually toggling."</p></div>
-                    <div class="review-card"><div class="review-user"><span>epstein</span><span class="review-stars">★★★★★</span></div><p class="review-text">"The horizontal and vertical pattern sliders match my scope and grip setups exactly. Best mouse redirection script I have used."</p></div>
-                    <div class="review-card"><div class="review-user"><span>MLK</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Been on this private version for 3 months now. No detection issues and the configs save/load locally without errors."</p></div>
-                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Really impressive latency handling on Mouse 4/5. Simulating keyboard lean switches makes siege believe it's native hardware input."</p></div>
-                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"The Favorites slot details are super handy. Switching from G36C to MP5 layout in the middle of rounds works instantly."</p></div>
-                    <div class="review-card"><div class="review-user"><span>jabroni000</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Support for DPI customization and exponent sliders means I can maintain my muscle memory while keeping cursor movement clean."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Redirection layout matches the game's raw input precisely. Quick Peek mapping to U/I runs instantly."</p></div>
+                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Private slot integrity is solid. Syncing profiles for Ash or Jager takes seconds."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jabroni</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Holding Caps Lock to pause Quick Peek works flawlessly. Best mouse redirection I've used."</p></div>
+                    <div class="review-card"><div class="review-user"><span>epstein</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Horizontal and vertical pattern sliders match my scope setups exactly. Unreal precision."</p></div>
+                    <div class="review-card"><div class="review-user"><span>MLK</span><span class="review-stars">★★★★★</span></div><p class="review-text">"3 months no detection. Configs save locally without errors. This is the real deal."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Really impressive latency handling on Mouse 4/5. Siege believes it's native hardware input."</p></div>
+                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Favorites slot details are super handy. Switching from G36C to MP5 mid-round works instantly."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jabroni</span><span class="review-stars">★★★★★</span></div><p class="review-text">"DPI customization and exponent sliders let me keep muscle memory while staying clean."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Redirection layout matches the game's raw input precisely. Quick Peek mapping to U/I runs instantly."</p></div>
+                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Private slot integrity is solid. Syncing profiles for Ash or Jager takes seconds."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jabroni</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Holding Caps Lock to pause Quick Peek works flawlessly. Best mouse redirection I've used."</p></div>
+                    <div class="review-card"><div class="review-user"><span>epstein</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Horizontal and vertical pattern sliders match my scope setups exactly. Unreal precision."</p></div>
+                    <div class="review-card"><div class="review-user"><span>MLK</span><span class="review-stars">★★★★★</span></div><p class="review-text">"3 months no detection. Configs save locally without errors. This is the real deal."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jordanz</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Really impressive latency handling on Mouse 4/5. Siege believes it's native hardware input."</p></div>
+                    <div class="review-card"><div class="review-user"><span>komodo</span><span class="review-stars">★★★★★</span></div><p class="review-text">"Favorites slot details are super handy. Switching from G36C to MP5 mid-round works instantly."</p></div>
+                    <div class="review-card"><div class="review-user"><span>jabroni</span><span class="review-stars">★★★★★</span></div><p class="review-text">"DPI customization and exponent sliders let me keep muscle memory while staying clean."</p></div>
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
 
-        <div class="footer">&copy; 2026 lithium. all rights reserved.</div>
-    </div>
-
-    <div class="checkout-dialog" id="checkout-dialog">
-        <div class="checkout-box">
-            <span class="close-dialog" onclick="closeCheckout()">Close</span>
-            <h3>Select Subscription</h3>
-            <div class="checkout-row selected" onclick="selectSub(this)">
-                <span class="checkout-row-title">1 Month Access</span>
-                <span class="checkout-row-price">$15.00</span>
-            </div>
-            <div class="checkout-row" onclick="selectSub(this)">
-                <span class="checkout-row-title">3 Month Access</span>
-                <span class="checkout-row-price">$35.00</span>
-            </div>
-            <button class="checkout-pay-btn" onclick="completePurchase()">Purchase via Cryptomus / Stripe</button>
-        </div>
-    </div>
-
-    <script>
-
-        function openCheckout() { document.getElementById("checkout-dialog").style.display = "flex"; }
-        function closeCheckout() { document.getElementById("checkout-dialog").style.display = "none"; }
-        function selectSub(el) { document.querySelectorAll(".checkout-row").forEach(r => r.classList.remove("selected")); el.classList.add("selected"); }
-        function completePurchase() { alert("Redirecting to Crypto/Card Gateway..."); closeCheckout(); }
-
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("visible");
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15 });
-
-        document.querySelectorAll(".fade-in").forEach(el => revealObserver.observe(el));
-
-        (function spawnFallingLetters() {
-            const layer = document.getElementById("falling-bg");
-            const count = 30;
-            for (let i = 0; i < count; i++) {
-                const el = document.createElement("span");
-                el.className = "fl";
-                el.textContent = "L";
-                const size = 14 + Math.random() * 26;
-                const dur = 20 + Math.random() * 25;
-                el.style.left = Math.random() * 100 + "vw";
-                el.style.fontSize = size + "px";
-                el.style.setProperty("--dur", dur + "s");
-                el.style.setProperty("--delay", (-Math.random() * dur).toFixed(2) + "s");
-                el.style.setProperty("--op", (0.04 + Math.random() * 0.12).toFixed(3));
-                el.style.setProperty("--rot-start", (Math.random() * 360).toFixed(0) + "deg");
-                el.style.setProperty("--rot-end", (Math.random() * 360).toFixed(0) + "deg");
-                layer.appendChild(el);
-            }
-        })();
-
-    </script>
+    <div class="footer">&copy; 2026 indica. All rights reserved.</div>
 </body>
 </html>
