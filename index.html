@@ -1,223 +1,326 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>indica.gg</title>
-<meta name="description" content="indica.gg turns an Arduino into a USB mouse that controls your recoil.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>inertia</title>
+  <meta name="description" content="Hardware recoil control for Rainbow Six Siege, with a trigger bot and aim assist, running from one Arduino.">
+  <link rel="icon" href="img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="slides.css">
 </head>
 <body>
 
-<header class="nav" id="nav">
-  <div class="nav-pill">
-    <a class="brand" href="#top">indica<b>.gg</b></a>
-    <nav class="nav-links" id="nav-links">
-      <span class="nav-hl" id="nav-hl"></span>
-      <a href="#top">Home</a>
-      <a href="#features">Features</a>
-      <a href="#compare">Compare</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#requirements">Requirements</a>
-    </nav>
-    <a class="btn white small" href="#pricing">Buy now</a>
-  </div>
+<div class="glow" id="glow"></div>
+
+<header class="nav">
+  <a class="logo" href="#home" data-go="0" aria-label="inertia"><img src="img/logo.png" alt="inertia"></a>
+  <nav class="nav-links">
+    <a href="#features" data-go="1">Features</a>
+    <a href="#pricing" data-go="2">Pricing</a>
+    <a class="hide-sm" href="#requirements" data-go="3">Requirements</a>
+    <a href="https://discord.gg/2WXNQyR8nq" target="_blank" rel="noopener">Discord</a>
+    <a class="btn" href="dashboard.html">Login</a>
+  </nav>
 </header>
 
-<!-- hero -->
-<section class="hero" id="top">
-  <div class="hero-card">
-    <canvas id="sky"></canvas>
-    <div class="hero-glow"></div>
+<main class="deck">
+  <div class="track" id="track">
 
-    <div class="hero-inner">
-      <span class="pill" data-reveal><i></i>Powered by <b>Arduino UNO R4</b></span>
-
-      <h1 id="headline" data-reveal>
-        <span class="l1">indica.gg</span>
-        <span class="l2">Every Spray <span class="rot" id="rot"><span>Controlled</span></span></span>
-      </h1>
-
-      <div class="chips" data-reveal>
-        <span class="chip">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/></svg>
-          <b>Rainbow Six Siege</b><span class="dot">·</span><em id="chip-price">$24.99 / month</em>
-        </span>
-        <span class="chip">
-          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>
-          <b>UNO R4</b><span class="dot">·</span><em>or Pro Micro</em>
-        </span>
-      </div>
-
-      <p class="tagline" data-reveal>Recoil control, a live LED display and every operator, all running from one USB board.</p>
-
-      <div class="hero-cta" data-reveal>
-        <a class="btn white" href="#pricing">Get Started <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
-        <div class="picker">
-          <button id="pk-prev" aria-label="Previous plan"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
-          <span id="pk-label">Month</span>
-          <button id="pk-next" aria-label="Next plan"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    <!-- 1. home: the pitch beside a slideshow of every page of the menu -->
+    <section class="slide" id="home" aria-label="Home">
+      <div class="inner home">
+        <div>
+          <h1 class="wordmark rise">inertia</h1>
+          <p class="tagline rise d1">every spray, controlled</p>
+          <div class="cta rise d2">
+            <a class="btn primary" href="#pricing" data-go="2">Get access</a>
+            <a class="btn" href="#features" data-go="1">See the menu</a>
+          </div>
+          <p class="meta rise d3">Rainbow Six Siege &middot; Arduino UNO R4 or Pro Micro &middot; Windows 10 / 11</p>
+        </div>
+        <div class="frame rise d2" id="heroShow" data-dur="3200">
+          <img src="img/ui-rcs.png" alt="Recoil page of the menu" class="on">
+          <img src="img/ui-trigger.png" alt="Trigger page of the menu">
+          <img src="img/ui-assist.png" alt="Aim assist page of the menu">
+          <img src="img/ui-loadout.png" alt="Loadout page of the menu">
+          <img src="img/ui-style.png" alt="Style page of the menu">
+          <img src="img/ui-misc.png" alt="Misc page of the menu">
+          <div class="timer"></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="showcase" id="demo" data-reveal>
-      <div class="stage" id="stage">
-        <div class="menu-fit" id="menu-fit">
-          <div class="menu-scale" id="menu-scale">
-            <div class="menu" id="menu">
-              <div class="m-title"><b>indica.gg</b><b class="sep">&gt;</b><span class="crumb" id="crumb">loadout</span></div>
-              <div class="m-side" id="m-side"><div class="m-nav-hl" id="m-nav-hl"></div></div>
-              <div class="m-panels" id="m-panels"></div>
-              <div class="m-foot"><span>indica.gg</span><span id="m-foot-key">Insert&nbsp;&nbsp;menu toggle</span></div>
-              <div class="m-popup-layer" id="m-popup-layer"></div>
+    <!-- 2. features: one page of the menu at a time, with what it does -->
+    <section class="slide" id="features" aria-label="Features">
+      <div class="inner features">
+        <div class="frame rise" id="featShow" data-dur="5000"><div class="timer"></div></div>
+        <div class="feat-copy rise d1">
+          <div class="swap" id="featText">
+            <span class="kicker" id="featKicker"></span>
+            <h2 id="featTitle"></h2>
+            <p id="featBody"></p>
+          </div>
+          <div class="tabs" id="featTabs"></div>
+          <div class="arrows">
+            <button type="button" id="featPrev" aria-label="Previous feature">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button type="button" id="featNext" aria-label="Next feature">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. pricing -->
+    <section class="slide" id="pricing" aria-label="Pricing">
+      <div class="inner">
+        <div class="head rise">
+          <h2>Pick a plan</h2>
+          <p>Every plan includes the full menu, the Arduino firmware and the setup guide.</p>
+        </div>
+        <!-- Checkout: the Buy buttons go to Discord for now. Swap each href for its checkout link. -->
+        <div class="plans">
+          <div class="plan rise d1">
+            <h3>Week</h3>
+            <div class="price">$9.99 <small>/ 7 days</small></div>
+            <ul><li>Full desktop menu</li><li>Every operator &amp; weapon</li><li>Arduino firmware</li><li>LED matrix editor</li></ul>
+            <a class="btn" href="https://discord.gg/2WXNQyR8nq" target="_blank" rel="noopener">Buy week</a>
+          </div>
+          <div class="plan best rise d2">
+            <span class="badge">Most popular</span>
+            <h3>Month</h3>
+            <div class="price">$24.99 <small>/ 30 days</small></div>
+            <ul><li>Full desktop menu</li><li>Every operator &amp; weapon</li><li>Arduino firmware</li><li>LED matrix editor</li><li>Updates during your plan</li></ul>
+            <a class="btn primary" href="https://discord.gg/2WXNQyR8nq" target="_blank" rel="noopener">Buy month</a>
+          </div>
+          <div class="plan rise d3">
+            <h3>Lifetime</h3>
+            <div class="price">$79.99 <small>one time</small></div>
+            <ul><li>Full desktop menu</li><li>Every operator &amp; weapon</li><li>Arduino firmware</li><li>LED matrix editor</li><li>All future updates</li></ul>
+            <a class="btn" href="https://discord.gg/2WXNQyR8nq" target="_blank" rel="noopener">Buy lifetime</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. requirements -->
+    <section class="slide" id="requirements" aria-label="Requirements">
+      <div class="inner">
+        <div class="head rise"><h2>What you need</h2></div>
+        <div class="reqs">
+          <div class="req rise d1">
+            <h3>Your PC</h3>
+            <dl>
+              <dt>System</dt><dd>Windows 10 / 11, 64-bit</dd>
+              <dt>Memory</dt><dd>8 GB RAM or more</dd>
+              <dt>Display</dt><dd>1080p or better</dd>
+              <dt>Connection</dt><dd>USB port + data cable</dd>
+            </dl>
+          </div>
+          <div class="req rise d2">
+            <h3>A board</h3>
+            <p><b>Arduino UNO R4 WiFi</b> &mdash; plug and play over USB-C, with the LED matrix.</p>
+            <p><b>Pro Micro</b> &mdash; smaller and cheaper, recoil control only, no LED display.</p>
+            <div class="links">
+              <a href="https://www.amazon.com/s?k=arduino+uno+r4+wifi" target="_blank" rel="noopener">Get an UNO R4 WiFi &#8599;</a>
+              <a href="https://www.amazon.com/s?k=pro+micro+atmega32u4" target="_blank" rel="noopener">Get a Pro Micro &#8599;</a>
             </div>
           </div>
         </div>
-        <div class="menu-closed-hint" id="menu-closed-hint">Menu hidden. Press <kbd>Insert</kbd> or <button id="reopen">show it</button>.</div>
-      </div>
-      <p class="caption">The real menu, live. Click around, drag sliders, try the LED animations on the Display page. <kbd id="menu-key-hint">Insert</kbd> hides it.</p>
-    </div>
-  </div>
-</section>
-
-<!-- features -->
-<section class="section" id="features">
-  <h2 class="title" data-reveal>Built different. <span>On hardware.</span></h2>
-  <div class="bento">
-    <article class="bcard" data-reveal>
-      <div class="art art-board">
-        <div class="mini-board">
-          <i class="mb-usb"></i><i class="mb-hdr t"></i><i class="mb-hdr b"></i><i class="mb-chip"></i>
-          <span class="mb-silk">UNO R4</span>
-          <div class="mb-matrix" id="mb-matrix"></div>
+        <div class="facts rise d3">
+          <div class="fact"><b>1 kHz</b><span>engine loop</span></div>
+          <div class="fact"><b>0</b><span>kernel drivers</span></div>
+          <div class="fact"><b>96</b><span>LED pixels</span></div>
+          <div class="fact"><b>Every</b><span>operator &amp; weapon</span></div>
         </div>
       </div>
-      <div class="bbody">
-        <h3>Real USB mouse</h3>
-        <p>The Arduino plugs in as a genuine HID mouse and does the pulling itself. No kernel drivers on your PC.</p>
-      </div>
-    </article>
-    <article class="bcard" data-reveal>
-      <div class="art art-matrix"><div class="big-matrix" id="bento-matrix"></div></div>
-      <div class="bbody">
-        <h3>Live LED display</h3>
-        <p>The board's 8×12 matrix shows your operator, three letters, or one of 17 animations it runs by itself.</p>
-      </div>
-    </article>
-    <article class="bcard" data-reveal>
-      <div class="art art-ops">
-        <div class="op"><b>ASH</b><span>R4C</span></div>
-        <div class="op"><b>ACE</b><span>AK12</span></div>
-        <div class="op"><b>JÄGER</b><span>416 Carbine</span></div>
-        <div class="op more"><b>+</b><span>Every op</span></div>
-      </div>
-      <div class="bbody">
-        <h3>Every operator</h3>
-        <p>Pick the operator, weapon, grip and barrel. The pattern is scaled to your DPI, sensitivity and FOV.</p>
-      </div>
-    </article>
-  </div>
-  <div class="stats">
-    <div data-reveal><b>1 kHz</b><span>Engine loop</span></div>
-    <div data-reveal><b>96</b><span>LED pixels</span></div>
-    <div data-reveal><b>0</b><span>Kernel drivers</span></div>
-  </div>
-</section>
+    </section>
 
-<!-- compare -->
-<section class="section" id="compare">
-  <p class="eyebrow" data-reveal>Why hardware beats scripts</p>
-  <h2 class="title" data-reveal>indica.gg <span>vs. software-only.</span></h2>
-  <div class="compare" data-reveal>
-    <div class="crow chead"><span></span><b class="us">indica.gg</b><b>Software-only</b></div>
-    <div class="crow"><span>Mouse movement comes from a real USB device</span><i class="yes"></i><i class="no"></i></div>
-    <div class="crow"><span>Spray runs on the board's own clock</span><i class="yes"></i><i class="no"></i></div>
-    <div class="crow"><span>Live LED status display</span><i class="yes"></i><i class="no"></i></div>
-    <div class="crow"><span>Per-operator, weapon &amp; attachment patterns</span><i class="yes"></i><i class="yes"></i></div>
-    <div class="crow"><span>Scaled to your DPI, sensitivity &amp; FOV</span><i class="yes"></i><i class="part"></i></div>
   </div>
-</section>
+</main>
 
-<!-- pricing -->
-<section class="section" id="pricing">
-  <h2 class="title" data-reveal>Pick a plan. <span>Plug in.</span></h2>
-  <p class="sub" data-reveal>Every plan includes the full menu, the Arduino firmware and the setup guide.</p>
-  <!-- Prices and checkout links: edit the amounts and the href on each Buy button. -->
-  <div class="plans">
-    <div class="plan" data-reveal>
-      <h3>Week</h3>
-      <div class="price"><b>$9.99</b><span>/ 7 days</span></div>
-      <ul><li>Full desktop menu</li><li>Every operator &amp; weapon</li><li>Arduino firmware</li><li>LED matrix editor</li></ul>
-      <a class="btn dark" href="#">Buy week</a>
-    </div>
-    <div class="plan popular" data-reveal>
-      <span class="tag">Most popular</span>
-      <h3>Month</h3>
-      <div class="price"><b>$24.99</b><span>/ 30 days</span></div>
-      <ul><li>Full desktop menu</li><li>Every operator &amp; weapon</li><li>Arduino firmware</li><li>LED matrix editor</li><li>Updates during your plan</li></ul>
-      <a class="btn white" href="#">Buy month</a>
-    </div>
-    <div class="plan" data-reveal>
-      <h3>Lifetime</h3>
-      <div class="price"><b>$79.99</b><span>one time</span></div>
-      <ul><li>Full desktop menu</li><li>Every operator &amp; weapon</li><li>Arduino firmware</li><li>LED matrix editor</li><li>All future updates</li></ul>
-      <a class="btn dark" href="#">Buy lifetime</a>
-    </div>
-  </div>
-</section>
-
-<!-- requirements -->
-<section class="section" id="requirements">
-  <h2 class="title" data-reveal>What you <span>need.</span></h2>
-  <div class="specs">
-    <div class="spec" data-reveal><span>System</span><b>Windows 10 / 11</b><small>64-bit</small></div>
-    <div class="spec" data-reveal><span>Memory</span><b>8 GB RAM</b><small>or more</small></div>
-    <div class="spec" data-reveal><span>Display</span><b>1080p</b><small>or better</small></div>
-    <div class="spec" data-reveal><span>Connection</span><b>USB port</b><small>+ data cable</small></div>
-  </div>
-  <div class="boards">
-    <div class="board-card" data-reveal>
-      <span class="tag">Recommended</span>
-      <h3>Arduino UNO R4 WiFi</h3>
-      <p>Plug and play over USB-C. Has the 8×12 LED matrix for your operator, three letters or 17 built-in animations.</p>
-      <a class="btn white" href="https://www.amazon.com/s?k=arduino+uno+r4+wifi" target="_blank" rel="noopener">Get an UNO R4 WiFi ↗</a>
-    </div>
-    <div class="board-card" data-reveal>
-      <h3>Pro Micro (ATmega32U4)</h3>
-      <p>Smaller and cheaper. Works as the USB mouse for recoil control, but has no LED display.</p>
-      <a class="btn dark" href="https://www.amazon.com/s?k=pro+micro+atmega32u4" target="_blank" rel="noopener">Get a Pro Micro ↗</a>
-    </div>
-  </div>
-</section>
+<div class="dots" id="dots"></div>
 
 <footer class="footer">
-  <div class="foot-cols">
-    <div class="foot-brand">
-      <a class="brand" href="#top">indica<b>.gg</b></a>
-      <p>Hardware recoil control for Rainbow Six Siege.</p>
-    </div>
-    <div class="foot-col">
-      <h4>Product</h4>
-      <a href="#features">Features</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#requirements">Requirements</a>
-    </div>
-    <div class="foot-col">
-      <h4>Boards</h4>
-      <a href="https://www.amazon.com/s?k=arduino+uno+r4+wifi" target="_blank" rel="noopener">UNO R4 WiFi</a>
-      <a href="https://www.amazon.com/s?k=pro+micro+atmega32u4" target="_blank" rel="noopener">Pro Micro</a>
-    </div>
-  </div>
-  <div class="foot-giant">indica.gg</div>
-  <div class="foot-bottom"><span>© 2026 indica.gg</span><span>Not affiliated with Ubisoft.</span></div>
+  <span>&copy; 2026 inertia &middot; Not affiliated with Ubisoft. &middot; Icons by <a href="https://icons8.com" target="_blank" rel="noopener">Icons8</a></span>
+  <span class="hint"><kbd>&larr;</kbd><kbd>&rarr;</kbd> or scroll to move</span>
 </footer>
 
-<div class="toasts" id="toasts"></div>
+<script>
+// ---- features: the menu page shown for each, and what it does ----------
+const FEATURES = [
+  { img: "ui-rcs",     tab: "Recoil",      kicker: "Recoil control", title: "Every spray, flat",
+    body: 'Per-operator, per-weapon <span class="accent">recoil patterns</span> scaled to your <span class="accent">DPI, sensitivity and FOV</span>, with horizontal and vertical strength and an advanced pattern editor. The pulling is done by an Arduino plugged in as a <span class="accent">real USB mouse</span>.' },
+  { img: "ui-rapid",   tab: "Rapid Fire",  kicker: "Rapid fire", title: "Semi-autos, full speed",
+    body: 'Turns a held click into <span class="accent">fast, human-timed taps</span> with a random delay between each, and keeps <span class="accent">recoil control</span> pulling while it fires.' },
+  { img: "ui-trigger", tab: "Trigger",     kicker: "Trigger bot", title: "Fires when you're on them",
+    body: 'An on-device <span class="accent">person detection model</span> watches a box around your crosshair and fires the moment someone is in it. <span class="accent">Hold mode</span> keeps shooting while you stay on target, and it runs on <span class="accent">DirectML</span> for AMD, Intel and NVIDIA.' },
+  { img: "ui-assist",  tab: "Assist",      kicker: "Aim assist", title: "Pulls you onto the head",
+    body: 'Steers smoothly onto the nearest target with your <span class="accent">range, strength and aim height</span>, plus <span class="accent">prediction</span> for moving players. It shares the trigger bot\'s detection, and recoil keeps working while it holds.' },
+  { img: "ui-loadout", tab: "Loadout",     kicker: "Loadout", title: "Your operator, your gun",
+    body: 'Pick <span class="accent">side, operator, weapon, scope, grip and barrel</span> and the pattern follows. The Arduino status and <span class="accent">auto send</span> live right beside it.' },
+  { img: "ui-sens",    tab: "Sensitivity", kicker: "Sensitivity", title: "Matched to your settings",
+    body: '<span class="accent">DPI, sensitivity, FOV and every ADS scope</span> are read from your Siege settings on first start, so the pull is scaled right without typing anything in.' },
+  { img: "ui-detect",  tab: "Auto Detect", kicker: "Auto detect", title: "Switches when you pick",
+    body: 'Click an operator on the <span class="accent">operator select screen</span> and the menu switches to them by itself, then sends the loadout to the Arduino after a short delay.' },
+  { img: "ui-style",   tab: "Style",       kicker: "Style", title: "Make it yours",
+    body: 'Two <span class="accent">layouts</span>, your own <span class="accent">accent, background and text colours</span>, and animated backdrops like snow, rain, stars and embers.' },
+  { img: "ui-misc",    tab: "LED & Misc",  kicker: "LED display & misc", title: "Your operator on the board",
+    body: 'The UNO R4\'s <span class="accent">8&times;12 LED matrix</span> shows your operator, three letters or an animation. <span class="accent">Stream proof</span> hides the menu from capture, and the menu key is yours to pick.' },
+];
 
-<script src="app.js"></script>
+// ---- a crossfading slideshow in a .frame ---------------------------------
+function Slideshow(frame, onChange) {
+  const imgs = () => [...frame.querySelectorAll("img")];
+  const timer = frame.querySelector(".timer");
+  const dur = +frame.dataset.dur || 4500;
+  frame.style.setProperty("--dur", dur + "ms");
+  let i = 0, t = 0, running = false, hover = false;
+  function show(n) {
+    const list = imgs();
+    i = (n + list.length) % list.length;
+    list.forEach((im, k) => im.classList.toggle("on", k === i));
+    if (onChange) onChange(i);
+    restart();
+  }
+  function restart() {
+    clearTimeout(t);
+    timer.classList.remove("run"); void timer.offsetWidth;
+    if (!running || hover) return;
+    timer.classList.add("run");
+    t = setTimeout(() => show(i + 1), dur);
+  }
+  frame.addEventListener("mouseenter", () => { hover = true; restart(); });
+  frame.addEventListener("mouseleave", () => { hover = false; restart(); });
+  return {
+    show, get index() { return i; },
+    play() { running = true; restart(); },
+    stop() { running = false; restart(); },
+  };
+}
+
+// home
+const hero = Slideshow(document.getElementById("heroShow"));
+
+// features
+const featFrame = document.getElementById("featShow");
+const tabs = document.getElementById("featTabs");
+FEATURES.forEach((f, k) => {
+  const im = new Image();
+  im.src = "img/" + f.img + ".png";
+  im.alt = f.kicker + " page of the menu";
+  im.loading = "lazy";
+  featFrame.insertBefore(im, featFrame.querySelector(".timer"));
+  const b = document.createElement("button");
+  b.type = "button"; b.textContent = f.tab;
+  b.addEventListener("click", () => feat.show(k));
+  tabs.appendChild(b);
+});
+const featText = document.getElementById("featText");
+let featFirst = true;
+function setFeatText(k) {
+  const f = FEATURES[k];
+  const apply = () => {
+    document.getElementById("featKicker").textContent = f.kicker;
+    document.getElementById("featTitle").textContent = f.title;
+    document.getElementById("featBody").innerHTML = f.body;
+    featText.classList.remove("out");
+  };
+  [...tabs.children].forEach((b, j) => b.classList.toggle("on", j === k));
+  if (featFirst) { featFirst = false; apply(); return; }
+  featText.classList.add("out");
+  setTimeout(apply, 220);
+}
+const feat = Slideshow(featFrame, setFeatText);
+feat.show(0);
+document.getElementById("featPrev").addEventListener("click", () => feat.show(feat.index - 1));
+document.getElementById("featNext").addEventListener("click", () => feat.show(feat.index + 1));
+
+// ---- the deck: one full-screen slide at a time ---------------------------
+const track = document.getElementById("track");
+const slides = [...track.children];
+const dots = document.getElementById("dots");
+const navLinks = [...document.querySelectorAll(".nav-links [data-go]")];
+const glow = document.getElementById("glow");
+let cur = -1;
+
+slides.forEach((s, k) => {
+  const d = document.createElement("button");
+  d.type = "button"; d.setAttribute("aria-label", s.getAttribute("aria-label"));
+  d.addEventListener("click", () => go(k));
+  dots.appendChild(d);
+});
+
+function go(n) {
+  n = Math.max(0, Math.min(slides.length - 1, n));
+  if (n === cur) return;
+  cur = n;
+  track.style.transform = `translateX(${-100 * n}%)`;
+  slides.forEach((s, k) => s.classList.toggle("on", k === n));
+  [...dots.children].forEach((d, k) => d.classList.toggle("on", k === n));
+  navLinks.forEach((a) => a.classList.toggle("on", +a.dataset.go === n && n > 0));
+  glow.style.transform = `translateX(${(n - 1.5) * -6}vw)`;
+  // only the visible slideshow runs
+  n === 0 ? hero.play() : hero.stop();
+  n === 1 ? feat.play() : feat.stop();
+  history.replaceState(null, "", "#" + slides[n].id);
+}
+
+document.querySelectorAll("[data-go]").forEach((a) => a.addEventListener("click", (e) => {
+  e.preventDefault(); go(+a.dataset.go);
+}));
+
+// keys: left/right (and up/down, page up/down) move between slides;
+// on Features, left/right step through the features first
+addEventListener("keydown", (e) => {
+  if (e.target.closest("input, textarea")) return;
+  const k = e.key;
+  if (k === "ArrowRight" || k === "ArrowLeft") {
+    const dir = k === "ArrowRight" ? 1 : -1;
+    if (cur === 1) {
+      const next = feat.index + dir;
+      if (next >= 0 && next < FEATURES.length) { feat.show(next); return; }
+    }
+    go(cur + dir);
+  } else if (k === "ArrowDown" || k === "PageDown" || k === " ") { e.preventDefault(); go(cur + 1); }
+  else if (k === "ArrowUp" || k === "PageUp") { e.preventDefault(); go(cur - 1); }
+  else if (k === "Home") go(0);
+  else if (k === "End") go(slides.length - 1);
+});
+
+// mouse wheel / trackpad: one slide per gesture
+let wheelLock = 0;
+addEventListener("wheel", (e) => {
+  if (innerWidth <= 860) return;            // small screens scroll inside a slide
+  const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+  if (Math.abs(d) < 12 || Date.now() < wheelLock) return;
+  wheelLock = Date.now() + 900;
+  go(cur + (d > 0 ? 1 : -1));
+}, { passive: true });
+
+// swipe
+let tx = null, ty = null;
+addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+addEventListener("touchend", (e) => {
+  if (tx === null) return;
+  const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) go(cur + (dx < 0 ? 1 : -1));
+  tx = ty = null;
+}, { passive: true });
+
+// ?still: no motion at all, for taking screenshots of a slide
+if (location.search.includes("still")) document.documentElement.classList.add("still");
+
+// start on the slide in the address (e.g. index.html#pricing)
+const start = slides.findIndex((s) => "#" + s.id === location.hash);
+track.style.transition = "none";
+go(start < 0 ? 0 : start);
+requestAnimationFrame(() => requestAnimationFrame(() => { track.style.transition = ""; }));
+</script>
 </body>
 </html>
