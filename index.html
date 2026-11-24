@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>inertia</title>
   <meta name="description" content="Hardware recoil control for Rainbow Six Siege, with a trigger bot and aim assist, running from one Arduino.">
-  <link rel="icon" href="img/logo.png">
+  <link rel="icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
 <div class="glow" id="glow"></div>
 
 <header class="nav">
-  <a class="logo" href="#home" data-go="0" aria-label="inertia"><img src="img/logo.png" alt="inertia"></a>
+  <a class="logo" href="#home" data-go="0" aria-label="inertia"><img src="logo.png" alt="inertia"></a>
   <nav class="nav-links">
     <a href="#features" data-go="1">Features</a>
     <a href="#pricing" data-go="2">Pricing</a>
@@ -42,12 +42,12 @@
           <p class="meta rise d3">Rainbow Six Siege &middot; Arduino UNO R4 or Pro Micro &middot; Windows 10 / 11</p>
         </div>
         <div class="frame rise d2" id="heroShow" data-dur="3200">
-          <img src="img/ui-rcs.png" alt="Recoil page of the menu" class="on">
-          <img src="img/ui-trigger.png" alt="Trigger page of the menu">
-          <img src="img/ui-assist.png" alt="Aim assist page of the menu">
-          <img src="img/ui-loadout.png" alt="Loadout page of the menu">
-          <img src="img/ui-style.png" alt="Style page of the menu">
-          <img src="img/ui-misc.png" alt="Misc page of the menu">
+          <img src="ui-rcs.png" alt="Recoil page of the menu" class="on">
+          <img src="ui-trigger.png" alt="Trigger page of the menu">
+          <img src="ui-assist.png" alt="Aim assist page of the menu">
+          <img src="ui-loadout.png" alt="Loadout page of the menu">
+          <img src="ui-style.png" alt="Style page of the menu">
+          <img src="ui-misc.png" alt="Misc page of the menu">
           <div class="timer"></div>
         </div>
       </div>
@@ -212,7 +212,7 @@ const featFrame = document.getElementById("featShow");
 const tabs = document.getElementById("featTabs");
 FEATURES.forEach((f, k) => {
   const im = new Image();
-  im.src = "img/" + f.img + ".png";
+  im.src = "" + f.img + ".png";
   im.alt = f.kicker + " page of the menu";
   im.loading = "lazy";
   featFrame.insertBefore(im, featFrame.querySelector(".timer"));
